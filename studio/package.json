@@ -31,7 +31,7 @@
     "remark-gfm": "^3.0.1",
     "sass": "^1.69.5",
     "typescript": "^4.9.5",
-    "vite": "^5.0.4",
+    "vite": "^5.0.13",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -60,6 +60,6 @@
   },
   "devDependencies": {
     "sass": "^1.69.5",
-    "vite": "^5.0.4"
+    "vite": "^5.0.13"
   }
 }
