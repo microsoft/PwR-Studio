@@ -1,0 +1,171 @@
+@use '@/styles/variables' as *;
+@use '@/styles/base/index' as *;
+.editor-page {
+    .header {
+        background: #FFFFFF;
+        width: 100%;
+        border: $border-width solid $border-color;
+        justify-content: space-between;
+        padding: 5px 10px;
+        .ms-Button-flexContainer {
+            // width: 70px;
+        }
+    }
+
+    .heading {
+        color: $secondary-color;
+        font-size: 20px;
+    }
+
+    .project-name {
+        color: $primary-color;
+        font-size: 20px;
+    }
+    .content-row {
+        height: calc(100vh - 44px);
+    }
+    .sidebar {
+        width: 56px;
+        border: $border-width solid $border-color;
+        border-top: 0px;
+        .rep-icon {
+            *[class^="root-"] {
+                width: 100%;
+                text-align: center;
+            }
+            &.selected {
+                background: lighten($secondary-color, 10%);
+            }
+            &.selected .ms-Button {
+                color: $secondary-color;
+            }
+            .ms-Button:hover {
+                background: none !important;
+            }
+            .ms-Button {
+                color: #B6B6B6;
+            }
+            .ms-Icon {
+                font-size: 20px;
+            }
+        }
+    }
+    .ir {
+        background: #EEF2F4;
+        width: -webkit-fill-available;
+        color: $font-color;
+        border-bottom: $border-width solid $border-color;
+        .container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .content {
+            height: 100%;
+            overflow: hidden;
+        }
+        .errors {
+            background: $white;
+            padding: 7px 8px;
+            overflow: hidden;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            column-gap: 10px;
+            .content {
+                min-width: 175px;
+                padding: 5px 10px;
+                justify-content: space-between;
+            }
+            .error {
+                border-radius: 8px;
+                border: $border-width solid #AF413D;
+                background: #ECC8C5;
+                color: #AF4446;
+            }
+            .warnings {
+                border-radius: 8px;
+                border: $border-width solid #977231;
+                background: #F9F4D6;
+                color: #97732C;
+            }
+            .optimize {
+                border-radius: 8px;
+                border: $border-width solid #457DAE;
+                opacity: 0.9;
+                background: #CFE8F6;
+                color: #477DAC;
+            }
+            .bot-experience {
+                border-radius: 8px;
+                border: $border-width solid #4280AC;
+                background: #DBF2D3;
+                color: #59714D;
+            }
+        }
+    }
+    .chat-wrapper {
+        width: 55%;
+        border: $border-width solid $border-color;
+        border-top: 0px;
+    }
+    .chat-header {
+        padding: 5px 10px;
+        width: 100%;
+        justify-content: space-between;
+        border-bottom: $border-width solid $border-color;
+        .chat-button {
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            .ms-Pivot {
+                border-radius: 12px;
+                border: $border-width solid $primary-color;
+                background: $white;
+                .ms-Pivot-text {
+                    &::before {
+                        background: $offline-color;
+                        height: 11px;
+                        width: 11px;
+                        border-radius: 11px;
+                        content: "";
+                        display: inline-block;
+                    }
+                }
+            }
+            button {
+                padding: 5px 10px;
+                height: 30px;
+            }
+            button[name="Dev Mode"] {
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+            }
+            button[name="Test Mode"] {
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
+            }
+            &.dev-online button[name="Dev Mode"] .ms-Pivot-text::before {
+                background: $online-color;
+                height: 11px;
+                width: 11px;
+                border-radius: 50%;
+                content: ' ';
+                display: inline-block;
+            }
+            
+            &.sandbox-online button[name="Test Mode"] .ms-Pivot-text::before {
+                background: $online-color;
+                height: 11px;
+                width: 11px;
+                border-radius: 50%;
+                content: ' ';
+                display: inline-block;
+            }
+        }
+        
+    }
+    .logout {
+        align-self: center
+    }
+}

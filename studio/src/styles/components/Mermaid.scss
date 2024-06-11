@@ -1,0 +1,30 @@
+@use '@/styles/variables' as *;
+.mermaid {
+    text-align: center;
+    [id^="mermaid-"] {
+        text-align: center;
+        .task>* {
+            stroke: darken(#a5afff, 20%) !important;
+            fill: #a5afff !important;
+        }
+
+        .inp>* {
+            stroke: darken(#9bd581, 20%) !important;
+            fill: #9bd581!important;
+        }
+        
+        .cbk>* {
+            stroke: darken(#f6d539, 20%) !important;
+            fill: #f6d539 !important;
+        }  
+        .endst>* {
+            stroke: darken(#cdacd6, 20%)!important;
+            fill: #cdacd6!important;
+        }              
+        .task, .cbk, .inp, .endst { 
+            span.nodeLabel {
+                color: #333 !important;
+            }
+        }
+    }
+}

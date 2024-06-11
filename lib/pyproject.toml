@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "pwr_studio"
+version = "0.1.1"
+description = ""
+authors = ["PwR Studio <pwr-studio@microsoft.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+confluent-kafka = "^2.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

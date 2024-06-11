@@ -1,0 +1,33 @@
+@use '@/styles/variables' as *;
+.small {
+    font-size: 12px;
+    padding: 0px 10px;
+}
+.primary-button {
+    border: 0px;
+    background-color: $primary-color;
+    color: $white;
+    &:hover {
+        background-color: darken($primary-color, 10%);
+        color: $white;
+    }
+}
+
+.secondary-button {
+    border: 0px;
+    background-color: $secondary-color;
+    color: $white;
+    &:hover {
+        background-color: darken($secondary-color, 10%);
+        color: $white;
+    }
+}
+
+.ms-Button--icon {
+    color: $dark-theme;
+    &:hover {
+        color: lighten($dark-theme, 10%);
+        background: $light-theme;
+    }
+
+}

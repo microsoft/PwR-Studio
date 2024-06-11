@@ -1,0 +1,32 @@
+
+.devbot-footer {
+    padding: 10px;
+    .button-stack {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding-bottom: 10px;
+        .ms-StackItem {
+            width: 50%;
+            &:not(:first-child) {
+                margin-left: 5px;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    }
+    .input-field-stack {
+        width: 100%;
+        justify-items: center;
+        align-items: center;
+        justify-content: space-around;
+        .ms-StackItem {
+            width: 100%;
+            .ms-TextField {
+                width: 100%;       
+                max-width: -webkit-fill-available !important;
+            }
+        }
+    }
+}

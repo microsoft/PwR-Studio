@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "server"
+version = "0.1.0"
+description = ""
+authors = ["Sameer Segal <sameersegal@microsoft.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.108.0"
+pydantic="^2.5.3"
+pydantic_core="^2.14.6"
+uvicorn = "^0.22.0"
+websockets = "^11.0.3"
+SQLAlchemy = "^2.0.12"
+psycopg2-binary = "^2.9.6"
+python-dotenv = "^1.0.0"
+python-multipart = "^0.0.6"
+azure-storage-queue = "^12.6.0"
+azure-storage-blob = "^12.16.0"
+PyJWT = "^2.7.0"
+opencensus-ext-azure = "^1.1.9"
+aiohttp = "^3.8.4"
+confluent-kafka = "^2.3.0"
+openai = "^1.10.0"
+pbyc = {version = "^0.2.7", source = "pbyc"}
+
+[tool.poetry.group.dev.dependencies]
+alembic = "^1.10.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "pbyc"
+url = "https://pwrpackages.z29.web.core.windows.net"
+priority = "supplemental"  # or another appropriate value
+
+
+[[tool.poetry.source]]
+name = "pypi"
+priority = "primary"

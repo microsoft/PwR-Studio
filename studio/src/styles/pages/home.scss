@@ -1,0 +1,123 @@
+@use '@/styles/variables' as *;
+@use '@/styles/base/index' as *;
+
+.home-page {
+    .header {
+        background: $system-white;
+        width: 100%;
+        border: $border-width solid $system-light;
+        justify-content: space-between;
+        padding: 5px 10px;
+        .heading {
+            color: $secondary-color;
+            font-size: 20px;
+        }
+    }
+    .content-row {
+        height: calc(100vh - 44px);
+        .content {
+            width: 100%;
+            background-color: $system-lighter;
+            .content-stack {
+                height: 100%;
+                padding: 60px;
+                justify-content: space-around;
+            }
+            .project-items-wrapper {
+                width: 777px;
+                overflow-x: auto;
+                margin: auto;
+                .project-item {
+                    cursor: pointer;
+                    display: inline-flex;
+                    border-radius: 4px;
+                    border: 1px solid $light-theme;
+                    background: $system-light;
+                    width: calc(33% - 20px);
+                    min-height: 125px;
+                    margin: 10px;
+                    padding: 10px;
+                    .project-details {
+                        justify-content: space-between;
+                    }
+                    .project-name {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: $system-darker;
+                    }
+                    .project-date {
+                        font-size: 11px;
+                        color: #786A6C;
+                        font-weight: 600;
+                    }
+                    .project-description {
+                        margin-top: 10px;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 3;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        width: 100%;
+                        height: auto; 
+                        line-height: 1.2;
+                        max-height: calc(1.2em * 3);
+                        word-wrap: normal;
+                        white-space: normal;
+                        color: #786A6C;
+                    }
+                    .ms-Button-icon {
+                        color: $system-darker;
+                        font-weight: bold;
+                    }
+                }
+            }
+            .project-search {
+                justify-content: center;
+                column-gap: 15px;
+            }
+            .search-box {
+                .ms-SearchBox {
+                    border-radius: 5px;
+                    border: $border-width solid $dark-theme;
+                    min-width: 600px;
+                    .ms-SearchBox-iconContainer {
+                        i {
+                            transform: scaleX(-1);
+                        }
+                    }
+        
+                    input.ms-SearchBox-field {
+                        ::placeholder {
+                        color: #a6a6a6; 
+                        }
+                
+                        &:focus {
+                        border-color: #0078d4;
+                        outline: none;
+                        }
+                    }
+                    .ms-SearchBox-clearButton {
+                        i {
+                        color: #a6a6a6; 
+                        }
+                        
+                        &:hover {
+                        background-color: #f4f4f4;
+                        }
+                    }
+                    }
+
+                }
+        }
+    }
+    .sidebar {
+        width: 56px;
+        border: $border-width solid $system-light;
+        border-top: 0px;
+        .logout {
+            .ms-Button-icon {
+                font-size: 24px;
+            }
+        }
+    }
+}

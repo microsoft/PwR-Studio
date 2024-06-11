@@ -1,0 +1,45 @@
+@use '@/styles/variables' as *;
+.devbot {
+    .chat {
+        height: 100%;
+        overflow-y: scroll;
+        display: flex;
+        flex-flow: row;
+        flex: 1;
+        flex-direction: column-reverse;
+    }
+    .message {
+        width: 75%;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 10px;
+        &.agent {
+            background: #AFD8FF;
+            color: #000;
+        }
+        &.user {
+            align-self: flex-end;
+            background: #CDC2FF
+        }
+        &.debug {
+            border-style: dashed;
+            background-color: #dff6dd;
+        }
+    }
+    .thought-icon {
+        color: rgb(73, 130, 5);
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 24px;
+        padding: 5px;
+    }
+    .no-background {
+        background: none;
+        margin: 0px;
+        padding: 0px;
+    }
+    .footer-stack {
+        border-top: 2px solid #bfbfbf;
+    }
+
+}

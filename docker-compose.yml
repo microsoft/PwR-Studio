@@ -1,0 +1,109 @@
+version: "3.9"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 3000
+    restart: unless-stopped    
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server/app:/code/server/app
+    environment:
+      - DB_CONNECTION_STRING=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+      - KAFKA_BROKER=${KAFKA_BROKER}
+      - KAFKA_USE_SASL=${KAFKA_USE_SASL}
+      - KAFKA_PRODUCER_USERNAME=${KAFKA_PRODUCER_USERNAME}
+      - KAFKA_PRODUCER_PASSWORD=${KAFKA_PRODUCER_PASSWORD}
+      - KAFKA_CONSUMER_USERNAME=${KAFKA_CONSUMER_USERNAME}
+      - KAFKA_CONSUMER_PASSWORD=${KAFKA_CONSUMER_PASSWORD}
+      - KAFKA_TOPIC_CUSTOM=${QUEUE_NAME_CUSTOM}      
+      - KAFKA_ENGINE_TOPIC=${KAFKA_ENGINE_TOPIC}
+      - AAD_APP_CLIENT_ID=${AAD_APP_CLIENT_ID}
+      - AAD_APP_TENANT_ID=${AAD_APP_TENANT_ID}
+      - ISSUER=${ISSUER}
+      - BLOB_CONNECTION_STRING=${BLOB_CONNECTION_STRING}
+      - BLOB_CONTAINER_NAME=${BLOB_CONTAINER_NAME}
+      - APPINSIGHTS_INSTRUMENTATIONKEY=${INSIGHTS_KEY}
+      - SERVER_HOST=${PWR_SERVER_HOST}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      # Add all Azure OpenAI keys
+    depends_on:
+      - postgres
+      - kafka
+  studio:
+    build:
+      context: .
+      dockerfile: ./studio/Dockerfile
+    restart: unless-stopped
+    environment:
+      - VITE_REACT_APP_AAD_APP_CLIENT_ID=${AAD_APP_CLIENT_ID}
+      - VITE_REACT_APP_AAD_APP_TENANT_ID=${AAD_APP_TENANT_ID}
+      - VITE_REACT_APP_AAD_APP_REDIRECT_URI=${AAD_APP_REDIRECT_URI}
+      - VITE_REACT_APP_AAD_APP_SCOPE_URI=${AAD_APP_SCOPE_URI}
+      - VITE_REACT_APP_SERVER_HOST=${SERVER_HOST}
+      - VITE_REACT_APP_INSIGHTS_KEY=${INSIGHTS_KEY}
+      - VITE_REACT_EDITOR=code
+    ports:
+      - "4173:4173"
+    depends_on:
+      - server
+  engine:
+    # build:
+    #   context: .
+    #   dockerfile: ./verified-jb-app/Dockerfile
+    image: jbengine:${JB_ENGINE_VERSION}
+    restart: unless-stopped
+    environment:      
+      - KAFKA_BROKER=${KAFKA_BROKER}
+      - KAFKA_USE_SASL=${KAFKA_USE_SASL}
+      - KAFKA_PRODUCER_USERNAME=${KAFKA_PRODUCER_USERNAME}
+      - KAFKA_PRODUCER_PASSWORD=${KAFKA_PRODUCER_PASSWORD}
+      - KAFKA_CONSUMER_USERNAME=${KAFKA_CONSUMER_USERNAME}
+      - KAFKA_CONSUMER_PASSWORD=${KAFKA_CONSUMER_PASSWORD}
+      - KAFKA_TOPIC_CUSTOM=${QUEUE_NAME_CUSTOM}
+      - KAFKA_TOPIC_JBAPP=${QUEUE_NAME_JBAPP}
+      - KAFKA_ENGINE_TOPIC=${KAFKA_ENGINE_TOPIC}      
+      - BLOB_CONNECTION_STRING=${BLOB_CONNECTION_STRING}
+      - BLOB_CONTAINER_NAME=${BLOB_CONTAINER_NAME}
+      - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}      
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+    depends_on:
+      - kafka
+  kafka:
+    image: docker.io/bitnami/kafka:3.6
+    ports:
+      - "9092:19092"
+    volumes:
+      - kafka_data:/bitnami
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:19092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://${PWRHOST}:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  kafka_data:
+    driver: local
+  postgres_data:
+    driver: local

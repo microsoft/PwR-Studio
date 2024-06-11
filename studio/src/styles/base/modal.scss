@@ -1,0 +1,66 @@
+@use '@/styles/variables' as *;
+.modal {
+    &-container {
+        min-width: 350px;
+        min-height: 250px;
+        z-index: 9999;
+        border-radius: 12px;
+        border: 1px solid $dark-theme;
+        overflow: hidden;
+        .ms-Modal-scrollableContent{
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+            min-height: 240px;
+            justify-content: space-between;
+            overflow-y: hidden !important;
+            overflow-x: hidden !important;
+        }
+        .modal-footer {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            column-gap: 10px;
+            padding: 10px 0px;
+            box-sizing: border-box;
+            justify-content: center;
+            .ms-Button {
+                width: 45%;
+            }
+        }
+        .modal-body {
+            padding: 20px;
+        }
+    }
+    &-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border: 0.5px solid $dark-theme;
+        background: $light-theme;
+        padding: 5px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border: 1px solid #898989;
+        * {
+            color: $dark-theme;
+        }
+        .modal-heading {
+            margin: 0px;
+            padding: 5px 10px 0px 10px;
+            color: $dark-theme;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+        }
+        .ms-Button--icon {
+            color: $dark-theme;
+            font-size: 20px;
+            padding: 5px;
+            cursor: pointer;
+            &:hover {
+                background: $light-theme;
+            }
+        }
+    }
+}
