@@ -13,8 +13,8 @@ Prerequisites:
 Instructions:
 1. Start Docker Desktop
 2. Open bash terminal. If you are on Windows use WSL2
-3. Git clone this repo
-4. Git clone the JB-Studio-Engine repo
+3. Git clone [this](https://github.com/microsoft/PwR-Studio) repo
+4. Git clone the [JB-Studio-Engine](https://github.com/OpenNyAI/Jugalbandi-Studio-Engine) repo
 4. Setup local environment variables
     1. Copy `env-dev.template` to `.env-dev`
     2. Enter OpenAI or Azure OpenAI credentials. Remember to remove Azure keys if you are not using them
