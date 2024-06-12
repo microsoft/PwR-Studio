@@ -20,7 +20,7 @@ azure-storage-queue = "^12.6.0"
 azure-storage-blob = "^12.16.0"
 PyJWT = "^2.7.0"
 opencensus-ext-azure = "^1.1.9"
-aiohttp = "^3.8.4"
+aiohttp = "^3.9.4"
 confluent-kafka = "^2.3.0"
 openai = "^1.10.0"
 pbyc = {version = "^0.2.7", source = "pbyc"}
