@@ -24,6 +24,8 @@ This tutorial will help you setup PwR Studio on your local computer to create [J
 2. **Open Bash Terminal:**
    - For Windows, use WSL2.
 
+You need to setup 3 repositories to start the PwR Studio. Follow the instructions below to clone the repositories. Keep the repositories in the same directory.
+
 3. **Clone PwR-Studio Repository:**
    ```bash
    git clone git@github.com:microsoft/PwR-Studio.git
@@ -43,9 +45,14 @@ This tutorial will help you setup PwR Studio on your local computer to create [J
    git clone git@github.com:OpenNyAI/Jugalbandi-Studio-Engine.git
    ```
 
-   Great job! You have successfully cloned the repositories. 🎉
 
-5. **Setup Local Environment Variables:**
+5. **Clone [PwR-NL2DSL](https://github.com/microsoft/PwR-NL2DSL) Repository:**
+   ```bash
+   git clone git@github.com:microsoft/PwR-NL2DSL.git
+   ```
+Great job! You have successfully cloned the repositories. 🎉
+
+6. **Setup Local Environment Variables:**
    1. Copy `env-dev.template` to `.env-dev`:
       ```bash
       cp env-dev.template .env-dev
@@ -69,7 +76,7 @@ We have script files to start the PwR Studio. You can use the following commands
    psql -U postgres -h localhost < scripts/backup.sql
    ```
    ```bash
-   psql -U postgres -h localhost < path/to/backup.sql/file/in/JB-Studio-Engine
+   psql -U postgres -h localhost < ../JB-Studio-Engine/backup.sql
    ```
    - **Note:** This will prompt you to enter the password for the Postgres DB.
       ```Password for user postgres: ``` 

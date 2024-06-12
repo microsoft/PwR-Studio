@@ -17,16 +17,16 @@ shift $((OPTIND -1))
 
 mkdir -p ./server/dist
 
-cd ../JB-Engine-Release/ && ./build.sh ${JB_ENGINE_VERSION}
+cd ../Jugalbandi-Studio-Engine/ && ./build.sh ${JB_ENGINE_VERSION}
 cd -
 
-cd ../NL2DSL-Release && poetry install && poetry build
+cd ../PwR-NL2DSL/ && poetry install && poetry build
 cd -
-cp ../NL2DSL-Release/dist/*.whl ./server/dist  
+cp ../PwR-NL2DSL/dist/*.whl ./server/dist  
 
-cd ../PwR-Studio-Release/lib && poetry install && poetry build
+cd ../PwR-Studio/lib && poetry install && poetry build
 cd -
-cp ../PwR-Studio-Release/lib/dist/*.whl ./server/dist  
+cp ../PwR-Studio/lib/dist/*.whl ./server/dist  
 
 
 
