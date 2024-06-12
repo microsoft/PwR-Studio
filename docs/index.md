@@ -8,6 +8,7 @@ PwR Studio from Microsoft Research provides a generic environment to test natura
 The documentation is organized as follows:
 
 1. [Tutorials](tutorials/)
+   1. [Quickstart](tutorials/quickstart.md)
 2. [How to guides](how-tos/)
 3. [References](references/)
 4. [Explanations](explanations/)
