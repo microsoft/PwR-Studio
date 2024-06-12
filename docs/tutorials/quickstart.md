@@ -62,6 +62,8 @@ We have script files to start the PwR Studio. You can use the following commands
    ```bash
    ./scripts/run.sh postgres
    ```
+   Note: Keep the Postgres container running in the background. Until you run the next command, do not stop the Postgres container.
+
 2. **Restore the Backup Data from PwR Studio and JB-Studio-Engine:**
    ```bash
    psql -U postgres -h localhost < scripts/backup.sql
@@ -69,7 +71,9 @@ We have script files to start the PwR Studio. You can use the following commands
    ```bash
    psql -U postgres -h localhost < path/to/backup.sql/file/in/JB-Studio-Engine
    ```
-   - **Note:** This will prompt you to enter the password for the Postgres DB. The default password is `postgres`. Enter the password and press Enter.
+   - **Note:** This will prompt you to enter the password for the Postgres DB.
+      ```Password for user postgres: ``` 
+   - The default password is `postgres`. Enter the password and press Enter.
 
    This will restore the data from the backup file to the Postgres DB.
 
@@ -78,6 +82,8 @@ We have script files to start the PwR Studio. You can use the following commands
       ```bash
       ./scripts/run.sh kafka
       ```
+      Note: Keep the kafka container running in the background. Until you run the next command, do not stop the kafka container.
+
    2. Next, create a kafka topic `jb` using the following command:
       ```bash
       ./scripts/create-topic.sh jb
