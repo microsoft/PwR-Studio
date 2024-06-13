@@ -116,7 +116,7 @@ Make sure that you have done the first time setup before starting the PwR Studio
 1. **Start PwR Studio:**
    - Run the following command to start the PwR Studio:
      ```bash
-     ./scripts/run.sh server studio
+     ./scripts/run.sh server studio engine
      ```
 2. **Open PwR Studio in Browser:**
    - Go to `http://localhost:4173`
@@ -130,7 +130,26 @@ Make sure that you have done the first time setup before starting the PwR Studio
    - Click on the `Log In` button on the home page.
 
 2. **Create a New Project:**
-   - Click on the `New Project` button on the home page.
-   - Enter the project name and click on `Create`.
-   - ![New Project](../assets/new_project.png)
+   - Click on the `Create New Project` button on the home page.
+   - Enter the project `Name` and `Description` and click on `Create`.
+   - ![New Project](../assets/create_project.png)
 
+3. **Start Page for Project:**
+   - You will be redirected to the project page.
+   - ![Project Page](../assets/start_page.png)
+   - You can use text box in the right side to enter the steps/text to build your bot.
+
+4. **Outputs**
+   - You can see the outputs of the bot in the right side of the page.
+   - There are 4 tabs in the left top section:
+   
+      <!-- <img src="../assets/menu.png" alt="Menu" width="20" /> -->
+   - `Natural Language Representation` - You can see the description of the steps in natural language.
+   - ![Natural Language](../assets/output.png)
+   - `Flow` - You can see the flow of the steps in the form of JSON.
+   - ![Flow](../assets/dsl.png)
+   - `Chart` - You can see the flow of the steps in the form of a flow-chart.
+   - `Code` - The final code generated based on the flow.
+   - ![Code](../assets/code.png)
+
+  
