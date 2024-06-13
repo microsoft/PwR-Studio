@@ -50,7 +50,14 @@ You need to setup 3 repositories to start the PwR Studio. Follow the instruction
    ```bash
    git clone git@github.com:microsoft/PwR-NL2DSL.git
    ```
-Great job! You have successfully cloned the repositories. 🎉
+   Great job! You have successfully cloned the repositories. 🎉
+
+   Your directory structure should look like this:
+      ```
+      ├── Jugalbandi-Studio-Engine
+      ├── PwR-NL2DSL
+      └── PwR-Studio
+      ```
 
 6. **Setup Local Environment Variables:**
    1. Copy `env-dev.template` to `.env-dev`:
@@ -61,7 +68,7 @@ Great job! You have successfully cloned the repositories. 🎉
    3. Enter your MSAL Auth keys.
    - **Note:** Remove Azure keys if you are not using them.
 
-## Steps to Start PwR Studio
+## Steps to Setup PwR Studio -- (First Time Setup)🚀
 
 We have script files to start the PwR Studio. You can use the following commands to start the PwR Studio.
 
@@ -95,6 +102,7 @@ We have script files to start the PwR Studio. You can use the following commands
       ```bash
       ./scripts/create-topic.sh jb
       ```
+Note: If you encounter any error then delete all the images, containers and volumes from Docker and try again from start.
 
 4. **Start the PwR Studio:**
    ```bash
@@ -102,10 +110,46 @@ We have script files to start the PwR Studio. You can use the following commands
    ```
    - **Note:** You need to run the above command twice to start both the PwR Studio and the engine. First time, let the server start completely and then stop (`Ctrl + C`) it. Then run the command again to start the engine.
 
-5. **Open PwR Studio in Browser:**
-   - Go to `http://localhost:4173`
-
-6. **Next Instructions to Test:**
-   - Follow the specific testing instructions provided.
-
 ---
+## Start PwR Studio 🚀
+Make sure that you have done the first time setup before starting the PwR Studio.
+1. **Start PwR Studio:**
+   - Run the following command to start the PwR Studio:
+     ```bash
+     ./scripts/run.sh server studio engine
+     ```
+2. **Open PwR Studio in Browser:**
+   - Go to `http://localhost:4173`
+   ![Home Page](../assets/home_page.png)
+   You are all set now for the next step on building Jugalbandi Apps! 🎉
+---
+
+## Building Jugalbandi Apps
+
+1. **Login to PwR Studio:**
+   - Click on the `Log In` button on the home page.
+
+2. **Create a New Project:**
+   - Click on the `Create New Project` button on the home page.
+   - Enter the project `Name` and `Description` and click on `Create`.
+   - ![New Project](../assets/create_project.png)
+
+3. **Start Page for Project:**
+   - You will be redirected to the project page.
+   - ![Project Page](../assets/start_page.png)
+   - You can use text box in the right side to enter the steps/text to build your bot.
+
+4. **Outputs**
+   - You can see the outputs of the bot in the right side of the page.
+   - There are 4 tabs in the left top section:
+   
+      <!-- <img src="../assets/menu.png" alt="Menu" width="20" /> -->
+   - `Natural Language Representation` - You can see the description of the steps in natural language.
+   - ![Natural Language](../assets/output.png)
+   - `Flow` - You can see the flow of the steps in the form of JSON.
+   - ![Flow](../assets/dsl.png)
+   - `Chart` - You can see the flow of the steps in the form of a flow-chart.
+   - `Code` - The final code generated based on the flow.
+   - ![Code](../assets/code.png)
+
+  
