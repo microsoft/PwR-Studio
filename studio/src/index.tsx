@@ -54,12 +54,12 @@ ReactDOM.render(
   <React.StrictMode>
     <MsalProvider instance={msalInstance}>
     <AuthenticatedTemplate>
-      <AppInsightsContext.Provider value={reactPlugin}>
+      <AppInsightsContext.Provider value={reactPlugin ? reactPlugin : {}}>
         <RouterProvider router={authenticatedRouter} />
       </AppInsightsContext.Provider>
     </ AuthenticatedTemplate>
     <UnauthenticatedTemplate>
-      <AppInsightsContext.Provider value={reactPlugin}>
+      <AppInsightsContext.Provider value={reactPlugin ? reactPlugin : {}}>
         <RouterProvider router={unAuthenticatedRouter} />
       </AppInsightsContext.Provider>
     </UnauthenticatedTemplate>

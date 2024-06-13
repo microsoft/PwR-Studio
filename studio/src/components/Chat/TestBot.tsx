@@ -216,7 +216,7 @@ const TestBot = (props: props) => {
                 data: toSendMsg
             })
         })
-        appInsights.trackEvent({ name: 'userChat', properties: { projectId: props.id, chatType: 'dev', data: toSendMsg } })
+        appInsights && appInsights.trackEvent({ name: 'userChat', properties: { projectId: props.id, chatType: 'dev', data: toSendMsg } })
         sendJsonMessage(toSendMsg)
         setDisableSend(true);
     }

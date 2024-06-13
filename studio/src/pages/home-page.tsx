@@ -83,7 +83,7 @@ export const HomePage: React.FunctionComponent = () => {
             },
             body: JSON.stringify({ name: 'openProject', user_id: userId, project_id: project.id, timestamp: new Date().toISOString() })
         })
-        appInsights.trackEvent({ name: 'openProject', properties: { projectId: project.id, userId: userId } })
+        appInsights && appInsights.trackEvent({ name: 'openProject', properties: { projectId: project.id, userId: userId } })
         window.location.href = `#/editor/${project.id}`
     }
 
@@ -155,7 +155,7 @@ export const HomePage: React.FunctionComponent = () => {
                                 data: { email: email }
                             })
                         }).then(res => {
-                            appInsights.trackEvent({ name: 'shareProject', properties: { templateId: copyTemplateValues.id, userId: userId, data: copyTemplateValues } })
+                            appInsights && appInsights.trackEvent({ name: 'shareProject', properties: { templateId: copyTemplateValues.id, userId: userId, data: copyTemplateValues } })
                         })
                     }
                 }).catch(error => {
@@ -247,7 +247,7 @@ export const HomePage: React.FunctionComponent = () => {
                                     data: { template_id: copyTemplateValues.id }
                                 })
                             }).then(res => {
-                                appInsights.trackEvent({ name: 'templateCopy', properties: { templateId: copyTemplateValues.id, userId: userId, data: copyTemplateValues } })
+                                appInsights && appInsights.trackEvent({ name: 'templateCopy', properties: { templateId: copyTemplateValues.id, userId: userId, data: copyTemplateValues } })
                                 window.location.href = `#/editor/${projectId}`;
                             })
                         }
@@ -256,7 +256,7 @@ export const HomePage: React.FunctionComponent = () => {
             }
         } catch (error) {
             setDisabled(false)
-            appInsights.trackException({ error: new Error(`Error in duplicating template - ${copyTemplateValues.id} for user - ${userId}`), severityLevel: SeverityLevel.Error });
+            appInsights && appInsights.trackException({ error: new Error(`Error in duplicating template - ${copyTemplateValues.id} for user - ${userId}`), severityLevel: SeverityLevel.Error });
             console.log(error)
         }
     }
