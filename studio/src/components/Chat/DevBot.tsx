@@ -131,7 +131,7 @@ export const devBot = (props:props) => {
                 data: toSendMsg
             })
         })
-        appInsights.trackEvent({ name: 'userChat', properties: { projectId: props.id, chatType: 'dev', data: toSendMsg } })
+        appInsights && appInsights.trackEvent({ name: 'userChat', properties: { projectId: props.id, chatType: 'dev', data: toSendMsg } })
         sendJsonMessage(toSendMsg)
         setDisableSend(true);
     }
@@ -193,7 +193,7 @@ export const devBot = (props:props) => {
                     data: { files: fileNames }
                 })
             })
-            appInsights.trackEvent({ name: 'uploadFiles', properties: { projectId: props.id, userId: props.userId, chatType: 'dev', files: fileNames } })
+            appInsights && appInsights.trackEvent({ name: 'uploadFiles', properties: { projectId: props.id, userId: props.userId, chatType: 'dev', files: fileNames } })
             if (message['error']) {
                 console.log('error')
             }

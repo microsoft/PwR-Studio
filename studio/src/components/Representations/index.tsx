@@ -159,7 +159,7 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
                         representation_name: selectedRepresentation.name
                     })
                 })
-                appInsights.trackEvent({ name: 'representationEditSubmit', properties: { projectId: props.projectId, userId: props.userId } })
+                appInsights && appInsights.trackEvent({ name: 'representationEditSubmit', properties: { projectId: props.projectId, userId: props.userId } })
 
                 setEditProgress(false)
                 setEditMode(false);
@@ -189,7 +189,7 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
                                     representation_name: selectedRepresentation.name
                                 })
                             })
-                            appInsights.trackEvent({ name: 'representationEditDiscard', properties: { projectId: props.projectId, userId: props.userId } });
+                            appInsights && appInsights.trackEvent({ name: 'representationEditDiscard', properties: { projectId: props.projectId, userId: props.userId } });
                             const value = selectedRepresentation?.text;
                             editorRef?.current?.setValue(value); setEditMode(false);
                         }
@@ -213,7 +213,7 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
                             representation_name: selectedRepresentation.name
                         })
                     })
-                    appInsights.trackEvent({ name: 'representationEditClick', properties: { projectId: props.projectId, userId: props.userId } });
+                    appInsights && appInsights.trackEvent({ name: 'representationEditClick', properties: { projectId: props.projectId, userId: props.userId } });
                     setEditMode(true)
                 }}>Edit</PrimaryButton>
             }
@@ -315,7 +315,7 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
                                             representation_name: item.props.itemKey
                                         })
                                     })
-                                    appInsights.trackEvent({ name: 'representationClick', properties: { representationName: item.props.itemKey, projectId: props.projectId, userId: props.userId } })
+                                    appInsights && appInsights.trackEvent({ name: 'representationClick', properties: { representationName: item.props.itemKey, projectId: props.projectId, userId: props.userId } })
                                     selectRepresentation(representations.find((r: any) => r.name === item.props.itemKey));
                                 }
                             }}
