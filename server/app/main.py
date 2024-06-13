@@ -1,6 +1,5 @@
 import aiohttp
 from openai import OpenAI
-from opencensus.ext.azure.log_exporter import AzureLogHandler
 import logging
 import time
 from jwt.exceptions import InvalidSignatureError
@@ -47,22 +46,12 @@ models.Base.metadata.create_all(bind=engine)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
-if "APPINSIGHTS_INSTRUMENTATIONKEY" in os.environ:
-    logger.addHandler(
-        AzureLogHandler(
-            connection_string=f'InstrumentationKey={os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"]}'
-        )
-    )
 
 devChatManager = ChatConnectionManager()
 outputChatManager = ChatConnectionManager()
 
 producer = KafkaProducer.from_env_vars()
 
-# blobManager = BlobManager(
-#     os.environ["BLOB_CONTAINER_NAME"],
-#     os.environ["BLOB_CONNECTION_STRING"]
-# )
 
 SERVER_HOST = os.environ["SERVER_HOST"]
 
