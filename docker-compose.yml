@@ -12,6 +12,10 @@ services:
       - ./server/app:/code/server/app
     environment:
       - DB_CONNECTION_STRING=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - KAFKA_BROKER=${KAFKA_BROKER}
       - KAFKA_USE_SASL=${KAFKA_USE_SASL}
       - KAFKA_PRODUCER_USERNAME=${KAFKA_PRODUCER_USERNAME}
