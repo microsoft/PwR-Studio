@@ -118,9 +118,9 @@ We have script files to start the PwR Studio. You can use the following commands
    ```
    Note: Keep the Postgres container running in the background. Until you run the next command, do not stop the Postgres container.
 
-2. **Restore the Backup Data from PwR Studio and JB-Studio-Engine:**
+2. **Create Tables and Restore the Backup Data from JB-Studio-Engine:**
    ```bash
-   psql -U postgres -h localhost < scripts/backup.sql
+   ./scripts/upgrade-db.sh
    psql -U postgres -h localhost < ../JB-Studio-Engine/backup.sql
    ```
    - **Note:** This will prompt you to enter the password for the Postgres DB.
