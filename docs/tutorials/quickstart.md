@@ -113,6 +113,12 @@ Your directory structure should look like this:
       ISSUER="https://sts.windows.net/<uuid>/"
       ```
 
+   3. Set the `KAFKA_ENGINE_TOPIC` to `jb`
+   
+      ```bash
+      KAFKA_ENGINE_TOPIC=jb
+      ```
+
 
 ## Steps to Setup PwR Studio -- (First Time Setup)🚀
 
