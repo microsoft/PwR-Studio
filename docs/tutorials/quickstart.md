@@ -12,6 +12,7 @@ This tutorial will help you setup PwR Studio on your local computer to create [J
 ## Prerequisites
 
 1. **OpenAI or Azure OpenAI Keys:** Obtain from [OpenAI](https://beta.openai.com/signup/) or [Azure](https://portal.azure.com/). Remember to comment out AZURE keys if you are not using them.
+
 ```bash
 OPENAI_API_KEY=
 
@@ -22,7 +23,9 @@ OPENAI_API_KEY=
 # AZURE_OPENAI_DEPLOYMENT_NAME=
 ```
 2. **Docker:** Install [Docker Desktop](https://www.docker.com/products/docker-desktop) for Windows and Mac or [Docker Engine](https://docs.docker.com/engine/install/) for Linux.
+
 3. **Microsoft Authentication Library (MSAL) Keys:** Read the instructions on this subsection, [Register the application and record identifiers](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-single-page-app-react-sign-in#register-the-application-and-record-identifiers) and get the following keys:
+
 ```bash
 AAD_APP_CLIENT_ID=<uuid>
 AAD_APP_TENANT_ID=<uuid>
