@@ -81,6 +81,12 @@ Your directory structure should look like this:
    ```
 
 6. **Setup Local Environment Variables:**
+   1.  Go into `PwR-Studio` repository
+      
+      ```bash
+      cd PwR-Studio
+      ```
+
    1. Copy `env-dev.template` to `.env-dev`:
       ```bash
       cp env-dev.template .env-dev
@@ -112,24 +118,25 @@ Your directory structure should look like this:
 
 We have script files to start the PwR Studio. You can use the following commands to start the PwR Studio.
 
-1. **Start Postgres DB and Add Basic Data:**
-   ```bash
-   ./scripts/run.sh postgres
-   ```
+1. **Setup the database:**
+   1.  Start database (Postgres) container
+      ```bash
+      ./scripts/run.sh postgres
+      ```
    Note: Keep the Postgres container running in the background. Until you run the next command, do not stop the Postgres container.
 
-2. **Restore the Backup Data from PwR Studio and JB-Studio-Engine:**
-   ```bash
-   psql -U postgres -h localhost < scripts/backup.sql
-   psql -U postgres -h localhost < ../JB-Studio-Engine/backup.sql
-   ```
-   - **Note:** This will prompt you to enter the password for the Postgres DB.
-      ```Password for user postgres: ``` 
-   - The default password is `postgres`. Enter the password and press Enter.
+   2. Import sql files to create schema:
+      In a separate terminal window, run the following command:
 
-   This will create the schema and insert a few rows of data into the database.
+      ```bash
+      psql -U postgres -h localhost < scripts/backup.sql
+      psql -U postgres -h localhost < ../Jugalbandi-Studio-Engine/backup.sql
+      ```
+      - **Note:** This will prompt you to enter the password for the Postgres DB.
+         ```Password for user postgres: ``` 
+      - The default password is `postgres`. Enter the password and press Enter.
 
-3. **Setup Kafka and Create a Topic:**
+3. **Setup the queues (Kafka):**
    1. First start a Kafka container using the following command:
       ```bash
       ./scripts/run.sh kafka
