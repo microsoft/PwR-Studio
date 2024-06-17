@@ -42,9 +42,9 @@ ISSUER="https://sts.windows.net/<uuid>/"
 ![Docker Desktop](../assets/docker-desktop.png)
 
 2. **Open Bash Terminal:**
-   - For Windows, use WSL2.
+   - For Windows, use WSL2. **Note:** PowerShell will not work.
 
-You need to setup 3 repositories to start the PwR Studio. Follow the instructions below to clone the repositories. Keep the repositories in the same directory.
+You need to setup 3 repositories to start the PwR Studio. Follow the instructions below to clone the repositories. Keep the repositories in the same directory as siblings. **Note:** Do not clone in your Windows directory as that will change the line endings.
 
 3. **Clone PwR-Studio Repository:**
    ```bash
