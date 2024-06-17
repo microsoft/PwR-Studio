@@ -39,6 +39,8 @@ ISSUER="https://sts.windows.net/<uuid>/"
 1. **Start Docker:**
    - Ensure Docker Desktop is running.
 
+![Docker Desktop](../assets/docker-desktop.png)
+
 2. **Open Bash Terminal:**
    - For Windows, use WSL2.
 
