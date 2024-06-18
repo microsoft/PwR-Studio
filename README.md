@@ -2,6 +2,8 @@
 
 PwR Studio converts natural language (NL) instructions into robust code. 
 
+![](docs/assets/main-screen.png)
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
