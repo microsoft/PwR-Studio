@@ -26,6 +26,7 @@ CREATE TYPE public.chat_message_type AS ENUM (
     'thought',
     'output',
     'start',
+    'dsl_state',
     'end',
     'error',
     'representation_edit',
@@ -81,6 +82,17 @@ ALTER TYPE public.output_user_type OWNER TO postgres;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- Name: alembic_version; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.alembic_version (
+    version_num character varying(32) NOT NULL
+);
+
+
+ALTER TABLE public.alembic_version OWNER TO postgres;
 
 --
 -- Name: analytics_logs; Type: TABLE; Schema: public; Owner: postgres
@@ -378,9 +390,9 @@ CREATE TABLE public.representation (
     project_id integer,
     is_editable boolean,
     sort_order integer,
-    is_pbyc_viewable boolean,
     is_user_viewable boolean,
-    created_at timestamp without time zone
+    created_at timestamp without time zone,
+    is_pwr_viewable boolean
 );
 
 
@@ -743,108 +755,11 @@ ALTER TABLE ONLY public.users_has_projects ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- Data for Name: analytics_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: alembic_version alembic_version_pkc; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-
-
-
---
--- Name: analytics_logs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.analytics_logs_id_seq', 1, true);
-
-
---
--- Name: dev_chat_messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.dev_chat_messages_id_seq', 1, true);
-
-
---
--- Name: exports_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.exports_id_seq', 1, false);
-
-
---
--- Name: output_chat_messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.output_chat_messages_id_seq', 1, false);
-
-
---
--- Name: plugins_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.plugins_id_seq', 1, false);
-
-
---
--- Name: project_has_credentials_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.project_has_credentials_id_seq', 1, false);
-
-
---
--- Name: projects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.projects_id_seq', 1, true);
-
-
---
--- Name: representation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.representation_id_seq', 1, true);
-
-
---
--- Name: tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.tags_id_seq', 1, false);
-
-
---
--- Name: template_has_credentials_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.template_has_credentials_id_seq', 1, false);
-
-
---
--- Name: template_has_plugins_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.template_has_plugins_id_seq', 1, false);
-
-
---
--- Name: template_has_tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.template_has_tags_id_seq', 1, false);
-
-
---
--- Name: templates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.templates_id_seq', 1, false);
-
-
---
--- Name: users_has_projects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.users_has_projects_id_seq', 1, true);
+ALTER TABLE ONLY public.alembic_version
+    ADD CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num);
 
 
 --

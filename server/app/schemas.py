@@ -114,7 +114,7 @@ class Representation(RepresentationBase):
     project_id: int
     name: str
     type: str
-    is_pbyc_viewable: bool
+    is_pwr_viewable: bool
     is_user_viewable: bool
 
     class Config:

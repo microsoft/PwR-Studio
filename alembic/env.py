@@ -5,30 +5,12 @@ from sqlalchemy import pool
 
 from alembic import context
 
-# import models from parent folder
-import sys
-sys.path.append("..")
-from app import models
-
-from dotenv import load_dotenv
-load_dotenv()
-
 import os
+from server.app.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-if os.environ.get("DB_CONNECTION_STRING"):
-    connection_string=os.environ['DB_CONNECTION_STRING'] 
-else:
-    # construct the postgres connection string from environment variables
-    db_user = os.getenv("DB_USER")
-    db_password = os.getenv("DB_PASSWORD")
-    db_host = os.getenv("DB_HOST")
-    db_port = os.getenv("DB_PORT")
-    db_name = os.getenv("DB_NAME")
-    connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
-config.set_main_option('sqlalchemy.url', connection_string)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -39,13 +21,22 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = models.Base.metadata
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+db_name = os.getenv("DB_NAME")
+db_user = os.getenv("DB_USER")
+db_password = os.getenv("DB_PASSWORD")
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
+
+# Construct the SQLAlchemy connection URL using URL class
+db_url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+config.set_main_option('sqlalchemy.url', db_url)
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -65,7 +56,6 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        compare_type=True,
     )
 
     with context.begin_transaction():
@@ -82,13 +72,12 @@ def run_migrations_online() -> None:
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
-        poolclass=pool.NullPool,        
+        poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata,
-            compare_type=True,
+            connection=connection, target_metadata=target_metadata
         )
 
         with context.begin_transaction():

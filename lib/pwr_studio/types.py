@@ -6,7 +6,7 @@ class Representation(BaseModel):
     name: str
     text: str
     type: str
-    is_pbyc_viewable: bool = True
+    is_pwr_viewable: bool = True
     is_user_viewable: bool = True
     is_editable: bool = True
     sort_order: int = 1
