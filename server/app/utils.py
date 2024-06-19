@@ -39,7 +39,7 @@ def generate_q_message(db, action, **kwargs):
             r.name: pwr_schema.Representation(
                 name=r.name,
                 text=r.text,
-                is_pbyc_viewable=r.is_pbyc_viewable,
+                is_pwr_viewable=r.is_pwr_viewable,
                 is_user_viewable=r.is_user_viewable,
                 is_editable=r.is_editable,
                 sort_order=r.sort_order,

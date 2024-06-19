@@ -921,7 +921,7 @@ async def get_chat_response(
                 "type": representation.type,
                 "text": representation.text,
                 "project_id": pid,
-                "is_pbyc_viewable": representation.is_pbyc_viewable,
+                "is_pwr_viewable": representation.is_pwr_viewable,
                 "is_user_viewable": True,
                 "is_editable": representation.is_editable,
                 "sort_order": representation.sort_order,

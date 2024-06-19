@@ -107,7 +107,7 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
                         setRepresentation(response)
                         if (response.length) {
                             setTimeout(() => {
-                                const viewRepr = response.filter((r: any) => r.is_pbyc_viewable)
+                                const viewRepr = response.filter((r: any) => r.is_pwr_viewable)
                                 if (viewRepr) {
                                     selectRepresentation(viewRepr[0])
                                     setData(viewRepr[0].text)
@@ -322,8 +322,8 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
                             headersOnly={true}
                             getTabId={getTabId}
                         >
-                            {representations && representations.filter((r: any) => r.is_pbyc_viewable).map((representation: any) => {
-                                return (representation.is_pbyc_viewable) ? <PivotItem headerButtonProps={{
+                            {representations && representations.filter((r: any) => r.is_pwr_viewable).map((representation: any) => {
+                                return (representation.is_pwr_viewable) ? <PivotItem headerButtonProps={{
                                     'disabled': editMode
                                 }} key={'tab-' + representation.name} headerText={representation.name} itemKey={representation.name} /> : ""
                             })}

@@ -378,7 +378,7 @@ CREATE TABLE public.representation (
     project_id integer,
     is_editable boolean,
     sort_order integer,
-    is_pbyc_viewable boolean,
+    is_pwr_viewable boolean,
     is_user_viewable boolean,
     created_at timestamp without time zone
 );
@@ -1327,4 +1327,3 @@ ALTER TABLE ONLY public.users_has_projects
 --
 -- PostgreSQL database dump complete
 --
-
