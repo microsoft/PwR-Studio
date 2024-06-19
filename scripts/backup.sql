@@ -1327,4 +1327,3 @@ ALTER TABLE ONLY public.users_has_projects
 --
 -- PostgreSQL database dump complete
 --
-

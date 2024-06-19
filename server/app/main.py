@@ -42,7 +42,7 @@ load_dotenv()
 # import sys
 # print(os.environ.get('DB_CONNECTION_STRING'), file=sys.stderr)
 
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
