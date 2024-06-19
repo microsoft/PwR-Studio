@@ -12,3 +12,4 @@ The documentation is organized as follows:
 2. [How to guides](how-tos/)
 3. [References](references/)
 4. [Explanations](explanations/)
+   1. [Architecture](explanations/architecture.md)
