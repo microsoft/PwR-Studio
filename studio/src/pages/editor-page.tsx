@@ -135,7 +135,7 @@ export const EditorPage: React.FunctionComponent = () => {
                         setRepresentation(response)
                         if (response.length) {
                             setTimeout(() => {
-                                const viewRepr = response.filter((r: any) => r.is_pbyc_viewable)
+                                const viewRepr = response.filter((r: any) => r.is_pwr_viewable)
                                 if (viewRepr) {
                                     selectRepresentation(viewRepr[0])
                                 }

@@ -187,7 +187,7 @@ class Representation(Base):
     project_id = Column(Integer, ForeignKey("projects.id"), index=True)
     is_editable = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)
-    is_pbyc_viewable = Column(Boolean, default=True)
+    is_pwr_viewable = Column(Boolean, default=True)
     is_user_viewable = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
