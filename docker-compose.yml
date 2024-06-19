@@ -50,9 +50,6 @@ services:
     depends_on:
       - server
   engine:
-    # build:
-    #   context: .
-    #   dockerfile: ./verified-jb-app/Dockerfile
     image: jbengine:${JB_ENGINE_VERSION}
     restart: unless-stopped
     environment:      
