@@ -124,25 +124,14 @@ Your directory structure should look like this:
 
 We have script files to start the PwR Studio. You can use the following commands to start the PwR Studio.
 
-1. **Setup the database:**
-   1.  Start database (Postgres) container
+1. **Create a dump file to import:**
+   Create dump file
       ```bash
-      ./scripts/run.sh postgres
+      cat ./scripts/backup.sql > dump.sql
+      cat ../Jugalbandi-Studio-Engine/backup.sql >> dump.sql
       ```
-   Note: Keep the Postgres container running in the background. Until you run the next command, do not stop the Postgres container.
 
-   2. Import sql files to create schema:
-      In a separate terminal window, run the following command:
-
-      ```bash
-      psql -U postgres -h localhost < scripts/backup.sql
-      psql -U postgres -h localhost < ../Jugalbandi-Studio-Engine/backup.sql
-      ```
-      - **Note:** This will prompt you to enter the password for the Postgres DB.
-         ```Password for user postgres: ``` 
-      - The default password is `postgres`. Enter the password and press Enter.
-
-3. **Setup the queues (Kafka):**
+2. **Setup the queues (Kafka):**
    1. First start a Kafka container using the following command:
       ```bash
       ./scripts/run.sh kafka

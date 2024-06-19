@@ -93,7 +93,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-        #- ./dump.sql:/docker-entrypoint-initdb.d/db_dump.sql
+      - ./dump.sql:/docker-entrypoint-initdb.d/db_dump.sql
 
 volumes:
   kafka_data:
