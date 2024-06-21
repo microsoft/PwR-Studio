@@ -5,7 +5,7 @@ import { useId, useBoolean } from '@fluentui/react-hooks';
 import { Pivot, PivotItem, IPivotStyles, Text } from '@fluentui/react';
 import React from 'react';
 import { useState } from 'react';
-import { APIHost } from '../constants';
+import { APIHost, NoAuth, DefaultName, DefaultOID, DefaultEmail, DefaultAuthToken } from '../constants';
 import { useParams } from 'react-router-dom';
 import { sendRequest } from '../api';
 import { useAccount, useMsal } from '@azure/msal-react';
@@ -97,29 +97,37 @@ export const EditorPage: React.FunctionComponent = () => {
     }, [params.id, token, userId])
 
     React.useEffect(() => {
-        if (account && inProgress === "none") {
-            instance.acquireTokenSilent({
-                scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
-                account: account
-            }).then((response) => {
-                setToken(response.accessToken)
-                setName(response?.account?.idTokenClaims?.name || 'User')
-                setUserId(response?.account?.idTokenClaims?.oid)
-            }).catch((error) => {
-                console.log(error)
-                // in case if silent token acquisition fails, fallback to an interactive method
-                if (error instanceof InteractionRequiredAuthError) {
-                    if (account && inProgress === "none") {
-                        instance.acquireTokenPopup({
-                            scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
-                        }).then((response) => {
-                            setToken(response.accessToken)
-                            setUserId(response?.account?.idTokenClaims?.oid)
-                        }).catch(error => console.log(error));
-                    }
-                }
-            });
-        }
+		if (NoAuth) {
+			console.log("Setting dummy user")
+			setToken(DefaultAuthToken)
+			setUserId(DefaultOID)
+			setName(DefaultName)
+		}
+		else {
+			if (account && inProgress === "none") {
+				instance.acquireTokenSilent({
+					scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
+					account: account
+				}).then((response) => {
+					setToken(response.accessToken)
+					setName(response?.account?.idTokenClaims?.name || 'User')
+					setUserId(response?.account?.idTokenClaims?.oid)
+				}).catch((error) => {
+					console.log(error)
+					// in case if silent token acquisition fails, fallback to an interactive method
+					if (error instanceof InteractionRequiredAuthError) {
+						if (account && inProgress === "none") {
+							instance.acquireTokenPopup({
+								scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
+							}).then((response) => {
+								setToken(response.accessToken)
+								setUserId(response?.account?.idTokenClaims?.oid)
+							}).catch(error => console.log(error));
+						}
+					}
+				});
+			}
+		}
     }, [account, inProgress, instance]);
 
     React.useEffect(() => {
@@ -336,9 +344,12 @@ export const EditorPage: React.FunctionComponent = () => {
                                     
                                 })
                             }
-                            <Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
-                                <IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
-                            </Stack.Item>
+                            { 
+								NoAuth ? null :
+								<Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
+									<IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
+								</Stack.Item>
+							}
                         </Stack>
                     </Stack.Item>
                     <Stack.Item className={'ir'}>

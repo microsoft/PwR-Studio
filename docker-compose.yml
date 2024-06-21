@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./server/Dockerfile
-    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 3000
+    command: uvicorn app.main:app --workers 1 --host 0.0.0.0 --port 3000
     restart: unless-stopped    
     ports:
       - "3000:3000"
@@ -31,6 +31,8 @@ services:
       - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
       - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION}
       - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - NO_AUTH=${NO_AUTH}
+      - DEFAULT_AUTH_OID=1
       # Add all Azure OpenAI keys
     depends_on:
       - postgres
@@ -48,6 +50,7 @@ services:
       - VITE_REACT_APP_SERVER_HOST=${SERVER_HOST}
       - VITE_REACT_APP_INSIGHTS_KEY=${APPINSIGHTS_INSTRUMENTATIONKEY}
       - VITE_REACT_EDITOR=code
+      - VITE_REACT_APP_NO_AUTH=${NO_AUTH}
     ports:
       - "4173:4173"
     depends_on:
