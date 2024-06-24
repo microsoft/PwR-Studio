@@ -973,6 +973,26 @@ async def get_output_response(
     print(
         f"#3S - main.py Starting Output Webhook with {output_response.type}:{output_response.message}; PwR-RID={output_response.correlation_id}"
     )
+    
+    if output_response.project:
+        project = output_response.project
+        # if project.current_iteration:
+        #     iterations_row['description'] = project.current_iteration.description
+
+        for name in project.representations:
+            representation = project.representations[name]
+            rep_dict = {
+                "name": name,
+                "type": representation.type,
+                "text": representation.text,
+                "project_id": pid,
+                "is_pwr_viewable": representation.is_pwr_viewable,
+                "is_user_viewable": True,
+                "is_editable": representation.is_editable,
+                "sort_order": representation.sort_order,
+            }
+            crud.create_representation(db, rep_dict)
+    
     if output_response.type == "output" or output_response.type == "debug":
         crud.create_output_message(
             db,
