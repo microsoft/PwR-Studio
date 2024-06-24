@@ -13,7 +13,9 @@ interface props {
     id: string | undefined,
     token: any,
     userId: any,
-    setOnlineState: Function
+    setOnlineState: Function,
+	resetChat: bool,
+	resetChatToggle: Function
 }
 
 const testBotStyles = makeStyles(theme => ({
@@ -227,6 +229,13 @@ const TestBot = (props: props) => {
         }
         return msg;
     }
+
+	React.useEffect(() => {
+		if (props.resetChat) {
+			sendMessageToWss("_reset_chat_");
+			props.resetChatToggle(false);
+		}
+	}, [props.resetChat]);
 
     return (
         <Stack id={chatId}>

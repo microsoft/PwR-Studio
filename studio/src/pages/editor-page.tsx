@@ -78,6 +78,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const [inputText, setInputText] = React.useState<string>('');
     const fileInput = React.createRef<HTMLInputElement>();
     const [dslImportLoader, setDslImportLoader] = React.useState<boolean>(false);
+	const [resetTestChat, setResetTestChat] = React.useState<boolean>(false);
     React.useEffect(() => {
         if (token && params.id) {
             sendRequest({
@@ -268,7 +269,7 @@ export const EditorPage: React.FunctionComponent = () => {
     }
 
     const renderRep = (item: any, index: number) => {
-        // if (item.name !== 'code') {
+        if (item.name !== 'fsm_state') {
             return (<Stack.Item 
                 className={item.name === selectedRepresentation?.name ? 'rep-icon selected' : 'rep-icon'}
                 key={index}>
@@ -279,7 +280,7 @@ export const EditorPage: React.FunctionComponent = () => {
                         {item.name}
                 </IconButton>
             </Stack.Item>)
-        // }
+        }
     }
 
     return (
@@ -427,15 +428,12 @@ export const EditorPage: React.FunctionComponent = () => {
                                                 aria-label="Actions"
                                                 overflowItems={[
                                                 {
-                                                    key: 'download',
-                                                    name: 'Download Transcripts',
-                                                    iconProps: { iconName: 'Download' },
-                                                    onClick: () => {},
-                                                }, {
-                                                    key: 'callbackForm',
-                                                    name: 'Callback form',
-                                                    iconProps: { iconName: 'FormLibrary' },
-                                                    onClick: () => {  },
+                                                    key: 'clearData',
+                                                    name: 'Reset session',
+                                                    iconProps: { iconName: 'Clear' },
+                                                    onClick: () => {
+														setResetTestChat(true);
+													},
                                                 }
                                                 ]}
                                                 onRenderOverflowButton={onRenderOverflowButton}
@@ -449,7 +447,7 @@ export const EditorPage: React.FunctionComponent = () => {
                                     <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} />
                                 </div>
                                 <div style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}>
-                                    <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} />
+                                    <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} resetChat={resetTestChat} resetChatToggle={setResetTestChat}/>
                                 </div>
                             </Stack.Item> 
                         </Stack>

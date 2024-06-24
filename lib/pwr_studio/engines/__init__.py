@@ -46,8 +46,7 @@ class PwRStudioEngine(ABC):
             assert isinstance(kwargs["correlation_id"], str)
             self._correlation_id = kwargs["correlation_id"]
 
-        if len(self._project.representations.keys()) == 0:
-            self.initalize()
+        self.initalize()
 
     @abstractmethod
     def _get_representations(self) -> List[PwRStudioRepresentation]:
@@ -58,7 +57,9 @@ class PwRStudioEngine(ABC):
         for pwrRep in pwrRepresentations:
             name = pwrRep.get_name()
             data = pwrRep.get_data()
-            self._project.representations[name] = data
+            
+            if name not in self._project.representations:
+                self._project.representations[name] = data
 
     async def process_utterance(self, text: str, **kwargs):
         allowed_args = {"chat_history", "files"}
