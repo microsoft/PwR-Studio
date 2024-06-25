@@ -286,7 +286,7 @@ export const EditorPage: React.FunctionComponent = () => {
     return (
         <Stack className='editor-page'>
             <Stack.Item>
-                <PublishModal isOpen={isPublishModalOpen} hideModal={hidePublishModal} />
+                <PublishModal isOpen={isPublishModalOpen} hideModal={hidePublishModal} representations={representations}/>
                 <Modal
                     titleAriaId={useId('pluginStore')}
                     isBlocking={true}

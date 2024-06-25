@@ -4,6 +4,7 @@ import React from 'react';
 interface props {
     isOpen: boolean
     hideModal: Function
+	representations: any
 }
 export const PublishModal = (props: props) => {
     return(
