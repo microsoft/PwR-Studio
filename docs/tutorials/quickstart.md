@@ -89,7 +89,7 @@ Your directory structure should look like this:
 
    1. Copy `env-dev.template` to `.env-dev`:
       ```bash
-      cp env-dev.template .env-dev
+      cp .env-dev.template .env-dev
       ```
    2. Enter your OpenAI or Azure OpenAI credentials in the `.env-dev` file. Remember to comment out AZURE keys if you are not using them.
 
