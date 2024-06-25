@@ -7,7 +7,7 @@ import { useId } from '@fluentui/react-hooks';
 import { useAccount, useMsal } from '@azure/msal-react';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
 import { sendRequest } from '../api';
-import { APIHost, NoAuth, DefaultName, DefaultOID, DefaultEmail, DefaultAuthToken } from '../constants';
+import { APIHost } from '../constants';
 import moment from 'moment';
 import { appInsights } from '../applicationInsightsService';
 import logo from './images/logo.png';
@@ -48,36 +48,29 @@ export const HomePage: React.FunctionComponent = () => {
     };    
 
     React.useEffect(() => {
-		if (NoAuth) {
-			console.log("Setting dummy user")
-			setToken(DefaultAuthToken)
-			setUserId(DefaultOID)
-		}
-		else {
-			if (account && inProgress === "none") {
-				instance.acquireTokenSilent({
-					scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
-					account: account
-				}).then((response) => {
-					console.log(response)
-					setToken(response.accessToken)
-					setUserId(response?.account?.idTokenClaims?.oid)
-				}).catch((error) => {
-					console.log(error)
-					// in case if silent token acquisition fails, fallback to an interactive method
-					if (error instanceof InteractionRequiredAuthError) {
-						if (account && inProgress === "none") {
-							instance.acquireTokenPopup({
-								scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
-							}).then((response) => {
-								setToken(response.accessToken)
-								setUserId(response?.account?.idTokenClaims?.oid)
-							}).catch(error => console.log(error));
-						}
-					}
-				});
-			}
-		}
+        if (account && inProgress === "none") {
+            instance.acquireTokenSilent({
+                scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
+                account: account
+            }).then((response) => {
+                console.log(response)
+                setToken(response.accessToken)
+                setUserId(response?.account?.idTokenClaims?.oid)
+            }).catch((error) => {
+                console.log(error)
+                // in case if silent token acquisition fails, fallback to an interactive method
+                if (error instanceof InteractionRequiredAuthError) {
+                    if (account && inProgress === "none") {
+                        instance.acquireTokenPopup({
+                            scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
+                        }).then((response) => {
+                            setToken(response.accessToken)
+                            setUserId(response?.account?.idTokenClaims?.oid)
+                        }).catch(error => console.log(error));
+                    }
+                }
+            });
+        }
     }, [account, inProgress, instance]);
 
     const clickAction = (project: any) => {
@@ -406,14 +399,11 @@ export const HomePage: React.FunctionComponent = () => {
             <Stack.Item>
                 <Stack horizontal className={'content-row'}>
                     <Stack.Item className={'sidebar'}>
-                        { 
-							NoAuth ? null :
-							<Stack verticalAlign='end' style={{ height: '100%' }}>
-								<Stack.Item align='center' className={'logout'}>
-									<IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'SignOut' }} title={t('logout')} ariaLabel={t('logout')} />
-								</Stack.Item>
-							</Stack>
-						}
+                        <Stack verticalAlign='end' style={{ height: '100%' }}>
+                            <Stack.Item align='center' className={'logout'}>
+                                <IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'SignOut' }} title={t('logout')} ariaLabel={t('logout')} />
+                            </Stack.Item>
+                        </Stack>
                     </Stack.Item>
                     <Stack.Item className={'content'}>
                         <Stack className={'content-stack'}>
