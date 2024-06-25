@@ -80,9 +80,6 @@ public_keys = {}
 AAD_APP_CLIENT_ID = os.environ["AAD_APP_CLIENT_ID"]
 AAD_APP_TENANT_ID = os.environ["AAD_APP_TENANT_ID"]
 # ISSUER = os.environ["ISSUER"]
-IS_NO_AUTH = os.environ["NO_AUTH"]
-DEFAULT_OID = os.environ["DEFAULT_AUTH_OID"]
-
 configReq = requests.get(
     f"https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/.well-known/openid-configuration"
 )
@@ -179,12 +176,7 @@ async def add_process_time_header(req: Request, call_next):
         return JSONResponse(status_code=401, content="")
     try:
         token = req.headers["authorization"]
-        
-        verification_of_token = None
-        if IS_NO_AUTH:
-            verification_of_token = {"oid": str(DEFAULT_OID)}
-        else:
-            verification_of_token = await verify_jwt(token)
+        verification_of_token = await verify_jwt(token)
 
         if verification_of_token:
             user_id = verification_of_token["oid"]
