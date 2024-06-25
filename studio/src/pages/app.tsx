@@ -4,7 +4,7 @@ import '../styles/App.css';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
 import { EventType } from "@azure/msal-browser";
 import { sendRequest } from './../api';
-import { APIHost, NoAuth, DefaultName, DefaultOID, DefaultEmail, DefaultAuthToken } from './../constants';
+import { APIHost } from './../constants';
 import { useTranslation } from 'react-i18next';
 
 
@@ -25,23 +25,6 @@ const stackStyles: Partial<IStackStyles> = {
   }
 };
 
-if (NoAuth) {
-  const data = {
-    oid: DefaultOID,
-    name: DefaultName,
-    email: DefaultEmail
-  }
-  sendRequest({
-    method: "POST",
-    headers: {
-  	"Content-Type": 'application/json'
-    },
-    body: JSON.stringify(data),
-    url: `${APIHost}/users`,
-    accessToken: DefaultAuthToken
-  });
-}
-
 export const App: React.FunctionComponent = () => {
   const { instance } = useMsal();
   const { t } = useTranslation();
@@ -49,33 +32,29 @@ export const App: React.FunctionComponent = () => {
     // This will be run on component mount
     const callbackId = instance.addEventCallback((message: any) => {
       // This will be run every time an event is emitted after registering this callback
-      if (NoAuth) {
-	    console.log("user already added at start");
-	  }
-	  else {
-	    if (message.eventType === EventType.LOGIN_SUCCESS) {
-          const result = message.payload;
-          const tokenClaims = result.account.idTokenClaims
-          const data = {
-            oid: tokenClaims.oid,
-            name: tokenClaims.name,
-            email: tokenClaims.preferred_username
-          }
-          sendRequest({
-            method: "POST",
-            headers: {
-              "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(data),
-            url: `${APIHost}/users`,
-            accessToken: result.accessToken
-          })
-            .then(response => {
-              window.location.href = '/#/home'
-              console.log(response)
-            })
+      if (message.eventType === EventType.LOGIN_SUCCESS) {
+        const result = message.payload;
+        const tokenClaims = result.account.idTokenClaims
+        const data = {
+          oid: tokenClaims.oid,
+          name: tokenClaims.name,
+          email: tokenClaims.preferred_username
         }
-	  }
+        sendRequest({
+          method: "POST",
+          headers: {
+            "Content-Type": 'application/json'
+          },
+          body: JSON.stringify(data),
+          url: `${APIHost}/users`,
+          accessToken: result.accessToken
+        })
+          .then(response => {
+            window.location.href = '/#/home'
+            console.log(response)
+          })
+
+      }
     });
 
     return () => {
@@ -100,74 +79,41 @@ export const App: React.FunctionComponent = () => {
     })
   }
 
-  if (NoAuth) {
-        return (
-      <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
-        <Text variant="xxLarge" styles={boldStyle}>
-          Welcome to PwR Studio
+  return (
+    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
+      <Text variant="xxLarge" styles={boldStyle}>
+        Welcome to PwR Studio
+      </Text>
+      <Stack styles={{ root: { width: "80vw" } }} >
+        <Text variant="large">
+          Programming with Representations (<b>PwR</b>) gives you the ability to build applications using a conversational interface. Build anything you like just by describing it in plain English.
         </Text>
-        <Stack styles={{ root: { width: "80vw" } }} >
+      </Stack>
+      <br />
+      <br />
+      <AuthenticatedTemplate>
+        <Stack verticalAlign='center' styles={{ root: { width: "80vw" } }} >
+          <br />
+          <br />
           <Text variant="large">
-            Programming with Representations (<b>PwR</b>) gives you the ability to build applications using a conversational interface. Build anything you like just by describing it in plain English.
+            Click on <Link styles={linkStyle} href="#/home">My Projects</Link> to access your projects
           </Text>
+          <br />
+          <br />
         </Stack>
-        <br />
-        <br />
-          <Stack verticalAlign='center' styles={{ root: { width: "80vw" } }} >
-            <br />
-            <br />
-            <Text variant="large">
-              Click on <Link styles={linkStyle} href="#/home">My Projects</Link> to access your projects
-            </Text>
-            <br />
-            <br />
-          </Stack>
-        <footer>
-          <div>
-            <ul style={footer}>
-            </ul>
-          </div>
-        </footer>
-      </Stack >
-    );
-  }
-  else {
-    return (
-      <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
-        <Text variant="xxLarge" styles={boldStyle}>
-          Welcome to PwR Studio
-        </Text>
-        <Stack styles={{ root: { width: "80vw" } }} >
-          <Text variant="large">
-            Programming with Representations (<b>PwR</b>) gives you the ability to build applications using a conversational interface. Build anything you like just by describing it in plain English.
-          </Text>
-        </Stack>
-        <br />
-        <br />
-        <AuthenticatedTemplate>
-          <Stack verticalAlign='center' styles={{ root: { width: "80vw" } }} >
-            <br />
-            <br />
-            <Text variant="large">
-              Click on <Link styles={linkStyle} href="#/home">My Projects</Link> to access your projects
-            </Text>
-            <br />
-            <br />
-          </Stack>
-        </AuthenticatedTemplate>
-        <UnauthenticatedTemplate>
-          <Link styles={linkStyle} href="#" onClick={login}>{t('login')}</Link>
-        </UnauthenticatedTemplate>
-        <AuthenticatedTemplate>
-          <Link styles={linkStyle} href="#" onClick={() => instance.logoutPopup()}>{t('logout')}</Link>
-        </AuthenticatedTemplate>
-        <footer>
-          <div>
-            <ul style={footer}>
-            </ul>
-          </div>
-        </footer>
-      </Stack >
-    );
-  }
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Link styles={linkStyle} href="#" onClick={login}>{t('login')}</Link>
+      </UnauthenticatedTemplate>
+      <AuthenticatedTemplate>
+        <Link styles={linkStyle} href="#" onClick={() => instance.logoutPopup()}>{t('logout')}</Link>
+      </AuthenticatedTemplate>
+      <footer>
+        <div>
+          <ul style={footer}>
+          </ul>
+        </div>
+      </footer>
+    </Stack >
+  );
 };
