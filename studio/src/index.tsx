@@ -13,7 +13,6 @@ import { App, HomePage, EditorPage } from './pages';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { reactPlugin } from './applicationInsightsService';
 import { msalConfig } from "./authConfig";
-import { NoAuth } from './constants';
 import './i18n';
 
 const msalInstance = new PublicClientApplication(msalConfig);
@@ -33,18 +32,12 @@ const authenticatedRouter = createHashRouter([
   }
 ]);
 
-let unAuthenticatedRouter = null;
-if (NoAuth) {
-  unAuthenticatedRouter = authenticatedRouter;
-}
-else {
-  unAuthenticatedRouter = createHashRouter([
-    {
-      path: "/",
-      element: <App/>,
-    }
-  ]);
-}
+const unAuthenticatedRouter = createHashRouter([
+  {
+    path: "/",
+    element: <App/>,
+  }
+])
 
 // Inject some global styles
 mergeStyles({
