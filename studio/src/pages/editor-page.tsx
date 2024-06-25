@@ -286,7 +286,7 @@ export const EditorPage: React.FunctionComponent = () => {
     return (
         <Stack className='editor-page'>
             <Stack.Item>
-                <PublishModal isOpen={isPublishModalOpen} hideModal={hidePublishModal} representations={representations}/>
+                <PublishModal isOpen={isPublishModalOpen} hideModal={hidePublishModal} representations={representations} dslName={projectDetails?.name}/>
                 <Modal
                     titleAriaId={useId('pluginStore')}
                     isBlocking={true}
@@ -426,11 +426,12 @@ export const EditorPage: React.FunctionComponent = () => {
                                     <Stack.Item>
                                         <OverflowSet
                                                 aria-label="Actions"
+												style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
                                                 overflowItems={[
                                                 {
                                                     key: 'clearData',
-                                                    name: 'Reset session',
-                                                    iconProps: { iconName: 'Clear' },
+                                                    name: 'Start / Reset bot',
+                                                    iconProps: { iconName: 'Rerun' },
                                                     onClick: () => {
 														setResetTestChat(true);
 													},
