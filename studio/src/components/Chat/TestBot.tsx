@@ -13,7 +13,9 @@ interface props {
     id: string | undefined,
     token: any,
     userId: any,
-    setOnlineState: Function
+    setOnlineState: Function,
+	resetChat: bool,
+	resetChatToggle: Function
 }
 
 const testBotStyles = makeStyles(theme => ({
@@ -83,6 +85,7 @@ const TestBot = (props: props) => {
     const [disableSend, setDisableSend] = React.useState(false);
     const [callBackMode, setCallBackMode] = React.useState(false);
 
+	const botRestartmessage = "_reset_chat_"
 
     const {
         getWebSocket,
@@ -228,6 +231,13 @@ const TestBot = (props: props) => {
         return msg;
     }
 
+	React.useEffect(() => {
+		if (props.resetChat) {
+			sendMessageToWss(botRestartmessage);
+			props.resetChatToggle(false);
+		}
+	}, [props.resetChat]);
+
     return (
         <Stack id={chatId}>
             <Stack.Item>
@@ -239,7 +249,7 @@ const TestBot = (props: props) => {
                         {messages ? messages.map((message: any, index: string) => (
                                 // <div key={crypto.randomUUID()}>
                                 <>
-                                    {message.message.trim() !== '' && !['representation_edit', 'files'].includes(message.type) && !(message.type === 'thought' && ['input', 'event'].includes(message.message.trim()))  &&
+                                    {message.message.trim() !== '' && !['representation_edit', 'files'].includes(message.type) && !(message.type === 'thought' && ['input', 'event'].includes(message.message.trim())) && message.message.trim() !== botRestartmessage  &&
                                         <div
                                             key={crypto.randomUUID()}
                                             className={getClassNames(message.type, message.message)}
