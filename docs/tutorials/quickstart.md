@@ -24,7 +24,7 @@ OPENAI_API_KEY=
 ```
 2. **Docker:** Install [Docker Desktop](https://www.docker.com/products/docker-desktop) for Windows and Mac or [Docker Engine](https://docs.docker.com/engine/install/) for Linux.
 
-3. **Microsoft Authentication Library (MSAL) Keys:** Read the instructions on this subsection, [Register the application and record identifiers](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-single-page-app-react-sign-in#register-the-application-and-record-identifiers) and get the following keys:
+3. **Microsoft Authentication Library (MSAL) Keys:** Read the instructions on this subsection, [Register the application and record identifiers](./msal.md) and get the following keys:
 
 ```bash
 AAD_APP_CLIENT_ID=<uuid>
@@ -89,7 +89,7 @@ Your directory structure should look like this:
 
    1. Copy `env-dev.template` to `.env-dev`:
       ```bash
-      cp env-dev.template .env-dev
+      cp .env-dev.template .env-dev
       ```
    2. Enter your OpenAI or Azure OpenAI credentials in the `.env-dev` file. Remember to comment out AZURE keys if you are not using them.
 
