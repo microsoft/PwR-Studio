@@ -11,7 +11,9 @@ This tutorial will help you setup PwR Studio on your local computer to create [J
 
 ## Prerequisites
 
-1. **OpenAI or Azure OpenAI Keys:** Obtain from [OpenAI](https://beta.openai.com/signup/) or [Azure](https://portal.azure.com/). Remember to comment out AZURE keys if you are not using them.
+1. Setup WSL2 on Windows. Follow the instructions [here](https://docs.microsoft.com/en-us/windows/wsl/install) to install WSL2 on Windows. **Note:** PowerShell/Windows Terminal will not work for this setup.
+
+2. **OpenAI or Azure OpenAI Keys:** Obtain from [OpenAI](https://beta.openai.com/signup/) or [Azure](https://portal.azure.com/). Remember to comment out AZURE keys if you are not using them.
 
 ```bash
 OPENAI_API_KEY=
@@ -32,6 +34,19 @@ AAD_APP_TENANT_ID=<uuid>
 AAD_APP_REDIRECT_URI="http://localhost:3000"
 ADD_APP_SCOPE_URI="api://<uuid>/Users.Create"
 ISSUER="https://sts.windows.net/<uuid>/"
+```
+4. Python 3.10.0 or higher installed on your system.
+5. Poetry installed on your system. Poetry's [official documentation](https://python-poetry.org/docs/#installing-with-pipx) suggest to install it using `pipx`:
+   1. Install `pipx` using the following commands: 
+```bash
+sudo apt update
+sudo apt install pipx
+pipx ensurepath
+sudo pipx ensurepath --global   
+```
+   2. Install Poetry using `pipx`:
+```bash
+pipx install poetry
 ```
 
 ## Instructions
