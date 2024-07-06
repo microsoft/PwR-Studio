@@ -14,8 +14,8 @@ interface props {
     token: any,
     userId: any,
     setOnlineState: Function,
-	resetChat: bool,
-	resetChatToggle: Function
+    resetChat: bool,
+    resetChatToggle: Function
 }
 
 const testBotStyles = makeStyles(theme => ({
@@ -34,6 +34,10 @@ const testBotStyles = makeStyles(theme => ({
     },
     agent: {
         background: '#AFD8FF',
+        color: '#000'
+    },
+    plugin: {
+        background: '#C9CCCF',
         color: '#000'
     },
     input: {
@@ -77,6 +81,7 @@ const TestBot = (props: props) => {
     const classUser = mergeStyles(classes.message, classes.user);
     const classInput = mergeStyles(classes.message, classes.input);
     const classAgent = mergeStyles(classes.message, classes.agent);
+    const classPlugin = mergeStyles(classes.message, classes.plugin);
     const userTypes = ["instruction", "feedback"]
     const noBackground = mergeStyles(classes.message, classes.noBackground)
     const debugClass = mergeStyles(classes.message, classes.debug);
@@ -85,7 +90,7 @@ const TestBot = (props: props) => {
     const [disableSend, setDisableSend] = React.useState(false);
     const [callBackMode, setCallBackMode] = React.useState(false);
 
-	const botRestartmessage = "_reset_chat_"
+    const botRestartmessage = "_reset_chat_"
 
     const {
         getWebSocket,
@@ -143,7 +148,9 @@ const TestBot = (props: props) => {
         }
         if (userTypes.includes(messageType)) {
             return classUser
-        } else {
+        } else if (message.startsWith('##plugin')) {
+		    return classPlugin
+		} else {
             return classAgent
         }
     }
@@ -231,12 +238,12 @@ const TestBot = (props: props) => {
         return msg;
     }
 
-	React.useEffect(() => {
-		if (props.resetChat) {
-			sendMessageToWss(botRestartmessage);
-			props.resetChatToggle(false);
-		}
-	}, [props.resetChat]);
+    React.useEffect(() => {
+        if (props.resetChat) {
+            sendMessageToWss(botRestartmessage);
+            props.resetChatToggle(false);
+        }
+    }, [props.resetChat]);
 
     return (
         <Stack id={chatId}>
