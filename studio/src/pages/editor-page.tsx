@@ -78,7 +78,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const [inputText, setInputText] = React.useState<string>('');
     const fileInput = React.createRef<HTMLInputElement>();
     const [dslImportLoader, setDslImportLoader] = React.useState<boolean>(false);
-	const [resetTestChat, setResetTestChat] = React.useState<boolean>(false);
+    const [resetTestChat, setResetTestChat] = React.useState<boolean>(false);
     React.useEffect(() => {
         if (token && params.id) {
             sendRequest({
@@ -98,7 +98,7 @@ export const EditorPage: React.FunctionComponent = () => {
     }, [params.id, token, userId])
 
     React.useEffect(() => {
-	if (account && inProgress === "none") {
+    if (account && inProgress === "none") {
             instance.acquireTokenSilent({
                 scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                 account: account
@@ -337,9 +337,9 @@ export const EditorPage: React.FunctionComponent = () => {
                                     
                                 })
                             }
-							<Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
-								<IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
-							</Stack.Item>
+                            <Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
+                                <IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
+                            </Stack.Item>
                         </Stack>
                     </Stack.Item>
                     <Stack.Item className={'ir'}>
@@ -415,15 +415,15 @@ export const EditorPage: React.FunctionComponent = () => {
                                     <Stack.Item>
                                         <OverflowSet
                                                 aria-label="Actions"
-												style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
+                                                style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
                                                 overflowItems={[
                                                 {
                                                     key: 'clearData',
                                                     name: 'Start / Reset bot',
                                                     iconProps: { iconName: 'Rerun' },
                                                     onClick: () => {
-														setResetTestChat(true);
-													},
+                                                        setResetTestChat(true);
+                                                    },
                                                 }
                                                 ]}
                                                 onRenderOverflowButton={onRenderOverflowButton}
