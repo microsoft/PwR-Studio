@@ -7,7 +7,7 @@ title: Architecture
 
 ![](../assets/pwr-studio-architecture.png)
 
-To edit this picture, edit [this](../assets/pwr-studio-architecture.drawio) file in [app.diagrams.net](app.diagrams.net) 
+To edit this picture, edit [this](../assets/pwr-studio-architecture.drawio) file in [app.diagrams.net](https://app.diagrams.net) 
 
 PwR Studio consists of the following components:
 1. Frontend - Reactjs single page application that the user interacts with.
