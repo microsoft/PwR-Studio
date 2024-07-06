@@ -337,12 +337,9 @@ export const EditorPage: React.FunctionComponent = () => {
                                     
                                 })
                             }
-                            { 
-								NoAuth ? null :
-								<Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
-									<IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
-								</Stack.Item>
-							}
+							<Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
+								<IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
+							</Stack.Item>
                         </Stack>
                     </Stack.Item>
                     <Stack.Item className={'ir'}>

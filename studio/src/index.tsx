@@ -37,7 +37,7 @@ const unAuthenticatedRouter = createHashRouter([
     path: "/",
     element: <App/>,
   }
-])
+]);
 
 // Inject some global styles
 mergeStyles({
