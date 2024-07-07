@@ -7,13 +7,16 @@ import TypingLoader from "./TypingLoader";
 import { sendRequest } from '../../api';
 import TestBotFooter from "./TestBotFooter";
 import { useId } from '@fluentui/react-hooks';
-
+import FormInput from '../FormInput';
+import DropdownInput from '../DropdownInput';
 
 interface props {
     id: string | undefined,
     token: any,
     userId: any,
-    setOnlineState: Function
+    setOnlineState: Function,
+    resetChat: bool,
+    resetChatToggle: Function
 }
 
 const testBotStyles = makeStyles(theme => ({
@@ -32,6 +35,10 @@ const testBotStyles = makeStyles(theme => ({
     },
     agent: {
         background: '#AFD8FF',
+        color: '#000'
+    },
+    plugin: {
+        background: '#C9CCCF',
         color: '#000'
     },
     input: {
@@ -75,6 +82,7 @@ const TestBot = (props: props) => {
     const classUser = mergeStyles(classes.message, classes.user);
     const classInput = mergeStyles(classes.message, classes.input);
     const classAgent = mergeStyles(classes.message, classes.agent);
+    const classPlugin = mergeStyles(classes.message, classes.plugin);
     const userTypes = ["instruction", "feedback"]
     const noBackground = mergeStyles(classes.message, classes.noBackground)
     const debugClass = mergeStyles(classes.message, classes.debug);
@@ -83,6 +91,7 @@ const TestBot = (props: props) => {
     const [disableSend, setDisableSend] = React.useState(false);
     const [callBackMode, setCallBackMode] = React.useState(false);
 
+    const botRestartmessage = "_reset_chat_"
 
     const {
         getWebSocket,
@@ -119,7 +128,7 @@ const TestBot = (props: props) => {
             scrollChatToBottom();
         }
     }, [lastJsonMessage, addMessages]);
-    
+
     React.useEffect(() => {
         if (readyState === ReadyState.OPEN) {
             props.setOnlineState(true)
@@ -135,11 +144,13 @@ const TestBot = (props: props) => {
         if (messageType === 'debug') {
             return debugClass
         }
-        if (message.indexOf('\xa1') > -1) {
-            return classInput
-        }
+        //if (message.indexOf('\xa1') > -1) {
+        //    return classInput
+        //}
         if (userTypes.includes(messageType)) {
             return classUser
+        } else if (message.startsWith('##plugin')) {
+            return classPlugin
         } else {
             return classAgent
         }
@@ -228,6 +239,44 @@ const TestBot = (props: props) => {
         return msg;
     }
 
+    const isCustomInputNeeded = (messages:any, type_check:string) => {
+        if (messages != null && messages.length > 1) {
+            if (messages[0].type === 'end'
+            && messages[1].type === 'output'
+            && messages[1].message.indexOf("\xa1") > -1) {
+                const msgBody = messages[1].message.split('\xa1')[0];
+                const jobj = JSON.parse(msgBody);
+                return jobj["type"] === type_check;
+            }
+        }
+        return false;
+    }
+    
+    const isFromInputNeeded = (messages:any) => {
+        return isCustomInputNeeded(messages, "form");
+    }
+    
+    const getFormFields = (messages:any) => {
+        const msgBody = messages[1].message.split('\xa1')[0];
+        return JSON.parse(msgBody)["vars"]
+    }
+
+    const isDropdownInputNeeded = (messages:any) => {
+        return isCustomInputNeeded(messages, "dropdown");
+    }
+    
+    const getDropdownFields = (messages:any) => {
+        const msgBody = messages[1].message.split('\xa1')[0];
+        return JSON.parse(msgBody)["options"]
+    }
+
+    React.useEffect(() => {
+        if (props.resetChat) {
+            sendMessageToWss(botRestartmessage);
+            props.resetChatToggle(false);
+        }
+    }, [props.resetChat]);
+
     return (
         <Stack id={chatId}>
             <Stack.Item>
@@ -239,7 +288,7 @@ const TestBot = (props: props) => {
                         {messages ? messages.map((message: any, index: string) => (
                                 // <div key={crypto.randomUUID()}>
                                 <>
-                                    {message.message.trim() !== '' && !['representation_edit', 'files'].includes(message.type) && !(message.type === 'thought' && ['input', 'event'].includes(message.message.trim()))  &&
+                                    {message.message.trim() !== '' && !['representation_edit', 'files'].includes(message.type) && !(message.type === 'thought' && ['input', 'event'].includes(message.message.trim())) && message.message.trim() !== botRestartmessage  &&
                                         <div
                                             key={crypto.randomUUID()}
                                             className={getClassNames(message.type, message.message)}
@@ -251,16 +300,16 @@ const TestBot = (props: props) => {
                                                             {message.type === 'thought' && <Icon iconName="Accept" className={classes.thoughtIcon} />}
                                                             {message.type === 'error' && <Icon iconName="StatusErrorFull" style={{ color: 'red' }} className={classes.thoughtIcon} />}
                                                         </Stack.Item>
-                                                        <Stack.Item>    
+                                                        <Stack.Item>
                                                             <div style={{ whiteSpace: 'pre-line' }}>
-                                                                {message.type === 'output' ? 
+                                                                {message.type === 'output' ?
                                                                 <div dangerouslySetInnerHTML={{ __html: getMessage(message.message) }} />
                                                                 : getMessage(message.message)}
                                                             </div>
                                                         </Stack.Item>
                                                     </Stack>
                                                 </Stack.Item>
-                                            
+
                                             </Stack>
                                         </div>}
                                         </>
@@ -271,7 +320,14 @@ const TestBot = (props: props) => {
                 </div>
             </Stack.Item>
             <Stack.Item id={footerId} className={classes.footerStack}>
-                <TestBotFooter disableSend={disableSend} sendMessageToWss={sendMessageToWss} />
+                { isFromInputNeeded(messages) ?
+                    <FormInput variableNames={getFormFields(messages)} sendVariableValues={sendMessageToWss}/> : 
+                    (
+                        isDropdownInputNeeded(messages) ?
+                        <DropdownInput choices={getDropdownFields(messages)} sendChoice={sendMessageToWss}/> :
+                        <TestBotFooter disableSend={disableSend} sendMessageToWss={sendMessageToWss} />
+                    )
+                }
             </Stack.Item>
         </Stack>
     )
