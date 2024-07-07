@@ -7,7 +7,8 @@ import TypingLoader from "./TypingLoader";
 import { sendRequest } from '../../api';
 import TestBotFooter from "./TestBotFooter";
 import { useId } from '@fluentui/react-hooks';
-
+import FormInput from '../FormInput';
+import DropdownInput from '../DropdownInput';
 
 interface props {
     id: string | undefined,
@@ -127,7 +128,7 @@ const TestBot = (props: props) => {
             scrollChatToBottom();
         }
     }, [lastJsonMessage, addMessages]);
-    
+
     React.useEffect(() => {
         if (readyState === ReadyState.OPEN) {
             props.setOnlineState(true)
@@ -143,14 +144,14 @@ const TestBot = (props: props) => {
         if (messageType === 'debug') {
             return debugClass
         }
-        if (message.indexOf('\xa1') > -1) {
-            return classInput
-        }
+        //if (message.indexOf('\xa1') > -1) {
+        //    return classInput
+        //}
         if (userTypes.includes(messageType)) {
             return classUser
         } else if (message.startsWith('##plugin')) {
-		    return classPlugin
-		} else {
+            return classPlugin
+        } else {
             return classAgent
         }
     }
@@ -238,6 +239,37 @@ const TestBot = (props: props) => {
         return msg;
     }
 
+    const isCustomInputNeeded = (messages:any, type_check:string) => {
+        if (messages != null && messages.length > 1) {
+            if (messages[0].type === 'end'
+            && messages[1].type === 'output'
+            && messages[1].message.indexOf("\xa1") > -1) {
+                const msgBody = messages[1].message.split('\xa1')[0];
+                const jobj = JSON.parse(msgBody);
+                return jobj["type"] === type_check;
+            }
+        }
+        return false;
+    }
+    
+    const isFromInputNeeded = (messages:any) => {
+        return isCustomInputNeeded(messages, "form");
+    }
+    
+    const getFormFields = (messages:any) => {
+        const msgBody = messages[1].message.split('\xa1')[0];
+        return JSON.parse(msgBody)["vars"]
+    }
+
+    const isDropdownInputNeeded = (messages:any) => {
+        return isCustomInputNeeded(messages, "dropdown");
+    }
+    
+    const getDropdownFields = (messages:any) => {
+        const msgBody = messages[1].message.split('\xa1')[0];
+        return JSON.parse(msgBody)["options"]
+    }
+
     React.useEffect(() => {
         if (props.resetChat) {
             sendMessageToWss(botRestartmessage);
@@ -268,16 +300,16 @@ const TestBot = (props: props) => {
                                                             {message.type === 'thought' && <Icon iconName="Accept" className={classes.thoughtIcon} />}
                                                             {message.type === 'error' && <Icon iconName="StatusErrorFull" style={{ color: 'red' }} className={classes.thoughtIcon} />}
                                                         </Stack.Item>
-                                                        <Stack.Item>    
+                                                        <Stack.Item>
                                                             <div style={{ whiteSpace: 'pre-line' }}>
-                                                                {message.type === 'output' ? 
+                                                                {message.type === 'output' ?
                                                                 <div dangerouslySetInnerHTML={{ __html: getMessage(message.message) }} />
                                                                 : getMessage(message.message)}
                                                             </div>
                                                         </Stack.Item>
                                                     </Stack>
                                                 </Stack.Item>
-                                            
+
                                             </Stack>
                                         </div>}
                                         </>
@@ -288,7 +320,14 @@ const TestBot = (props: props) => {
                 </div>
             </Stack.Item>
             <Stack.Item id={footerId} className={classes.footerStack}>
-                <TestBotFooter disableSend={disableSend} sendMessageToWss={sendMessageToWss} />
+                { isFromInputNeeded(messages) ?
+                    <FormInput variableNames={getFormFields(messages)} sendVariableValues={sendMessageToWss}/> : 
+                    (
+                        isDropdownInputNeeded(messages) ?
+                        <DropdownInput choices={getDropdownFields(messages)} sendChoice={sendMessageToWss}/> :
+                        <TestBotFooter disableSend={disableSend} sendMessageToWss={sendMessageToWss} />
+                    )
+                }
             </Stack.Item>
         </Stack>
     )
