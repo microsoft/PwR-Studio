@@ -11,23 +11,31 @@ interface props {
 }
 
 const uploadProgram = (url: string, secret: string, name: string, representations: any) => {
-    const dslContent = representations?.find(r => r.name == 'dsl')?.text || '{}'
+    const dslContentText = representations?.find(r => r.name == 'dsl')?.text || '{}';
     const codeContent = representations?.find(r => r.name == 'code')?.text || ''
-    
-    const keyFields = JSON.parse(dslContent)?.config_vars?.map(x => x?.name).join(',')
-    
+    const dslContent = JSON.parse(dslContentText);
+    const credentials = dslContent.config_vars.map(x => x.name);
+    ;
+
     const requestBody = {
-        'name': name,
-        'dsl': dslContent,
+        'name': dslContent.fsm_name,
+        'dsl': dslContentText,
         'code': codeContent,
-        'required_credentials': keyFields,
+        'requirements': '',
+        'required_credentials': credentials,
+        'index_urls':[''],
+        'version': '1.0.0'
+
     }
 
     sendRequest({
         url: url,
         method: "POST",
         accessToken: secret,
-        body: requestBody
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
 }
 
