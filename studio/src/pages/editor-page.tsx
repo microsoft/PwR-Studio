@@ -78,6 +78,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const [inputText, setInputText] = React.useState<string>('');
     const fileInput = React.createRef<HTMLInputElement>();
     const [dslImportLoader, setDslImportLoader] = React.useState<boolean>(false);
+    const [resetTestChat, setResetTestChat] = React.useState<boolean>(false);
     React.useEffect(() => {
         if (token && params.id) {
             sendRequest({
@@ -97,7 +98,7 @@ export const EditorPage: React.FunctionComponent = () => {
     }, [params.id, token, userId])
 
     React.useEffect(() => {
-        if (account && inProgress === "none") {
+    if (account && inProgress === "none") {
             instance.acquireTokenSilent({
                 scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                 account: account
@@ -260,7 +261,7 @@ export const EditorPage: React.FunctionComponent = () => {
     }
 
     const renderRep = (item: any, index: number) => {
-        // if (item.name !== 'code') {
+        if (item.name !== 'fsm_state') {
             return (<Stack.Item 
                 className={item.name === selectedRepresentation?.name ? 'rep-icon selected' : 'rep-icon'}
                 key={index}>
@@ -271,13 +272,13 @@ export const EditorPage: React.FunctionComponent = () => {
                         {item.name}
                 </IconButton>
             </Stack.Item>)
-        // }
+        }
     }
 
     return (
         <Stack className='editor-page'>
             <Stack.Item>
-                <PublishModal isOpen={isPublishModalOpen} hideModal={hidePublishModal} />
+                <PublishModal isOpen={isPublishModalOpen} hideModal={hidePublishModal} representations={representations} dslName={projectDetails?.name}/>
                 <Modal
                     titleAriaId={useId('pluginStore')}
                     isBlocking={true}
@@ -414,17 +415,15 @@ export const EditorPage: React.FunctionComponent = () => {
                                     <Stack.Item>
                                         <OverflowSet
                                                 aria-label="Actions"
+                                                style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
                                                 overflowItems={[
                                                 {
-                                                    key: 'download',
-                                                    name: 'Download Transcripts',
-                                                    iconProps: { iconName: 'Download' },
-                                                    onClick: () => {},
-                                                }, {
-                                                    key: 'callbackForm',
-                                                    name: 'Callback form',
-                                                    iconProps: { iconName: 'FormLibrary' },
-                                                    onClick: () => {  },
+                                                    key: 'clearData',
+                                                    name: 'Start / Reset bot',
+                                                    iconProps: { iconName: 'Rerun' },
+                                                    onClick: () => {
+                                                        setResetTestChat(true);
+                                                    },
                                                 }
                                                 ]}
                                                 onRenderOverflowButton={onRenderOverflowButton}
@@ -438,7 +437,7 @@ export const EditorPage: React.FunctionComponent = () => {
                                     <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} />
                                 </div>
                                 <div style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}>
-                                    <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} />
+                                    <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} resetChat={resetTestChat} resetChatToggle={setResetTestChat}/>
                                 </div>
                             </Stack.Item> 
                         </Stack>
