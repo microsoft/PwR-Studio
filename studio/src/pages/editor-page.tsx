@@ -418,6 +418,18 @@ export const EditorPage: React.FunctionComponent = () => {
                                                 style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
                                                 overflowItems={[
                                                 {
+                                                    key: 'download',
+                                                    name: 'Download Transcript',
+                                                    iconProps: { iconName: 'Download' },
+                                                    onClick: () => {},
+                                                },
+                                                {
+                                                    key: 'callbackFrom',
+                                                    name: 'Callback From',
+                                                    iconProps: { iconName: 'FormLibrary' },
+                                                    onclick: () => {}
+                                                },
+                                                {
                                                     key: 'clearData',
                                                     name: 'Start / Reset bot',
                                                     iconProps: { iconName: 'Rerun' },
