@@ -169,4 +169,5 @@ __pycache__
 .DS_Store
 studio/dist
 .env-dev
+.env-prod
 dump.sql

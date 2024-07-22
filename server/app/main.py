@@ -107,7 +107,7 @@ def authenticate_id_token(id_token, issuer, audience, jwks_uri):
 
 async def verify_jwt(token):
     try:
-        id_token = token.split(" ")[1]
+        id_token = token.replace("Bearer ", "")
         return authenticate_id_token(id_token, ISSUER, AAD_APP_CLIENT_ID, JWKS_URI)
         # TODO: Fix auth
     except Exception as e:
