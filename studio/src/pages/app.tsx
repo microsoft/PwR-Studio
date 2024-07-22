@@ -47,7 +47,7 @@ export const App: React.FunctionComponent = () => {
           },
           body: JSON.stringify(data),
           url: `${APIHost}/users`,
-          accessToken: result.accessToken
+          accessToken: result.idToken
         })
           .then(response => {
             window.location.href = '/#/home'
