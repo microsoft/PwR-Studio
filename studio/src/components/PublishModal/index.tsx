@@ -1,11 +1,54 @@
 import '@/styles/components/publishModal.scss';
 import { DefaultButton, Icon, Label, Modal, Stack, TextField } from '@fluentui/react';
 import React from 'react';
+import { sendRequest } from '../../api';
+
 interface props {
-    isOpen: boolean
-    hideModal: Function
+    isOpen: boolean,
+    hideModal: Function,
+    representations: any,
+    dslName: string
 }
+
+const uploadProgram = (url: string, secret: string, name: string, representations: any) => {
+    const dslContentText = representations?.find(r => r.name == 'dsl')?.text || '{}';
+    const codeContent = representations?.find(r => r.name == 'code')?.text || ''
+    const dslContent = JSON.parse(dslContentText);
+    const credentials = dslContent.config_vars.map(x => x.name);
+    ;
+
+    const requestBody = {
+        'name': dslContent.fsm_name,
+        'dsl': dslContentText,
+        'code': codeContent,
+        'requirements': '',
+        'required_credentials': credentials,
+        'index_urls':[''],
+        'version': '1.0.0'
+
+    }
+
+    sendRequest({
+        url: url,
+        method: "POST",
+        accessToken: secret,
+        body: JSON.stringify(requestBody),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+}
+
 export const PublishModal = (props: props) => {
+    const [message, setMessage] = React.useState('');
+    const [secretKey, setSecretKey] = React.useState('');
+    
+    const resetModal = () => {
+        setMessage('');
+        setSecretKey('');
+        props.hideModal();
+    }
+    
     return(
         <>
             <Modal
@@ -24,7 +67,10 @@ export const PublishModal = (props: props) => {
                                 <Label htmlFor={'installationUrl'}>Installation Url</Label>
                             </Stack.Item>
                             <Stack.Item>
-                                <TextField id={'installationUrl'} />
+                                <TextField 
+                                    id={'installationUrl'}
+                                    onChange={(e, value) => { setMessage(value || '') }}
+                                    value={message}/>
                             </Stack.Item>
                         </Stack>
                         <Stack horizontal className='input-fields'>
@@ -32,7 +78,10 @@ export const PublishModal = (props: props) => {
                                 <Label htmlFor={'jbManagerSecret'}>JB Manager Secret</Label>
                             </Stack.Item>
                             <Stack.Item>
-                                <TextField id={'jbManagerSecret'} />
+                                <TextField 
+                                    id={'jbManagerSecret'}
+                                    onChange={(e, value) => { setSecretKey(value || '') }}
+                                    value={secretKey}/>
                             </Stack.Item>
                         </Stack>
                         <Stack>
@@ -53,10 +102,13 @@ before you do wide-scale release.
                     <Stack.Item>
                         <Stack horizontal className={'footer-buttons'}>
                             <Stack.Item>
-                                <DefaultButton className={'primary-button'} onClick={() => props.hideModal()}>Publish</DefaultButton>
+                                <DefaultButton className={'primary-button'} onClick={() => {
+                                    uploadProgram(message, secretKey, props.dslName, props.representations);
+                                    resetModal();
+                                }}>Publish</DefaultButton>
                             </Stack.Item>
                             <Stack.Item>
-                                <DefaultButton onClick={() => props.hideModal()}>Cancel</DefaultButton>
+                                <DefaultButton onClick={() => resetModal()}>Cancel</DefaultButton>
                             </Stack.Item>
                         </Stack>
                     </Stack.Item>
