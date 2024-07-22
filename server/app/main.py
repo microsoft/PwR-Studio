@@ -79,31 +79,36 @@ def get_db():
 public_keys = {}
 AAD_APP_CLIENT_ID = os.environ["AAD_APP_CLIENT_ID"]
 AAD_APP_TENANT_ID = os.environ["AAD_APP_TENANT_ID"]
-# ISSUER = os.environ["ISSUER"]
-configReq = requests.get(
-    f"https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/.well-known/openid-configuration"
-)
-config = configReq.json()
-ISSUER = config["issuer"]
-jwks = requests.get(config["jwks_uri"]).json()
-for jwk in jwks["keys"]:
-    kid = jwk["kid"]
-    public_keys[kid] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
+ISSUER = f'https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/v2.0'
+JWKS_URI = f'https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/discovery/v2.0/keys'
 
+
+def fetch_jwks_keys(jwks_uri):
+    response = requests.get(jwks_uri)
+    response.raise_for_status()
+    return response.json()
+
+def authenticate_id_token(id_token, issuer, audience, jwks_uri):
+    # Create a JWKS client
+    jwks_client = jwt.PyJWKClient(jwks_uri)
+    
+    # Get the signing key
+    signing_key = jwks_client.get_signing_key_from_jwt(id_token)
+    
+    # Decode and validate the token
+    decoded_token = jwt.decode(
+        id_token,
+        signing_key.key,
+        algorithms=["RS256"],
+        audience=audience,
+        issuer=issuer
+    )
+    return decoded_token
 
 async def verify_jwt(token):
-    kid = jwt.get_unverified_header(token.replace("Bearer ", ""))["kid"]
-    key = public_keys[kid]
     try:
-        unverified_token = jwt.get_unverified_header(token.replace("Bearer ", ""))
-        return jwt.decode(
-            token.replace("Bearer ", ""),
-            issuer=ISSUER,
-            audience=AAD_APP_CLIENT_ID,
-            key=key,
-            algorithms=[unverified_token["alg"]],
-            options={"verify_signature": False},
-        )
+        id_token = token.split(" ")[1]
+        return authenticate_id_token(id_token, ISSUER, AAD_APP_CLIENT_ID, JWKS_URI)
         # TODO: Fix auth
     except Exception as e:
         return None
