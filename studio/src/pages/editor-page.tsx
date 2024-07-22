@@ -102,7 +102,7 @@ export const EditorPage: React.FunctionComponent = () => {
                 scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                 account: account
             }).then((response) => {
-                setToken(response.accessToken)
+                setToken(response.idToken)
                 setName(response?.account?.idTokenClaims?.name || 'User')
                 setUserId(response?.account?.idTokenClaims?.oid)
             }).catch((error) => {
@@ -113,7 +113,7 @@ export const EditorPage: React.FunctionComponent = () => {
                         instance.acquireTokenPopup({
                             scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                         }).then((response) => {
-                            setToken(response.accessToken)
+                            setToken(response.idToken)
                             setUserId(response?.account?.idTokenClaims?.oid)
                         }).catch(error => console.log(error));
                     }

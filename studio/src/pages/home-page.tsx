@@ -54,7 +54,7 @@ export const HomePage: React.FunctionComponent = () => {
                 account: account
             }).then((response) => {
                 console.log(response)
-                setToken(response.accessToken)
+                setToken(response.idToken)
                 setUserId(response?.account?.idTokenClaims?.oid)
             }).catch((error) => {
                 console.log(error)
@@ -64,7 +64,7 @@ export const HomePage: React.FunctionComponent = () => {
                         instance.acquireTokenPopup({
                             scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                         }).then((response) => {
-                            setToken(response.accessToken)
+                            setToken(response.idToken)
                             setUserId(response?.account?.idTokenClaims?.oid)
                         }).catch(error => console.log(error));
                     }
