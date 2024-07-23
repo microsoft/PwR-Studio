@@ -97,6 +97,7 @@ async def verify_jwt(token):
         return authenticate_id_token(id_token, ISSUER, AAD_APP_CLIENT_ID, JWKS_URI)
         # TODO: Fix auth
     except Exception as e:
+        print("Auth error:", e)
         return None
 
 
