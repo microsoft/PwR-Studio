@@ -50,7 +50,7 @@ export const HomePage: React.FunctionComponent = () => {
     React.useEffect(() => {
         if (account && inProgress === "none") {
             instance.acquireTokenSilent({
-                scopes: ["user.read"],
+                scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                 account: account
             }).then((response) => {
                 console.log(response)

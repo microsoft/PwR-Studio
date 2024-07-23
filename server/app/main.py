@@ -1,20 +1,16 @@
-import aiohttp
 from openai import OpenAI
 import logging
 import time
 from jwt.exceptions import InvalidSignatureError
 import jwt
 from .utils import generate_q_message
-from confluent_kafka import Producer, KafkaException
-from datetime import datetime
 import requests
 import uuid
 import json
 import os
-from typing import Dict, List, Any, Optional
+from typing import List, Optional
 from fastapi import (
     FastAPI,
-    Header,
     Request,
     HTTPException,
     Depends,
@@ -30,19 +26,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import lib.pwr_studio.types as pwr_schema
 from . import crud, models, schemas
-from .database import SessionLocal, engine
-from .blob_manager import BlobManager
+from .database import SessionLocal
 from .chat_manager import ChatConnectionManager
 import tempfile
 from dotenv import load_dotenv
 from lib.pwr_studio.kafka_utils import KafkaProducer
 
 load_dotenv()
-
-# import sys
-# print(os.environ.get('DB_CONNECTION_STRING'), file=sys.stderr)
-
-# models.Base.metadata.create_all(bind=engine)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
@@ -83,11 +73,6 @@ ISSUER = f'https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/v2.0'
 JWKS_URI = f'https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/discovery/v2.0/keys'
 
 
-def fetch_jwks_keys(jwks_uri):
-    response = requests.get(jwks_uri)
-    response.raise_for_status()
-    return response.json()
-
 def authenticate_id_token(id_token, issuer, audience, jwks_uri):
     # Create a JWKS client
     jwks_client = jwt.PyJWKClient(jwks_uri)
@@ -101,16 +86,18 @@ def authenticate_id_token(id_token, issuer, audience, jwks_uri):
         signing_key.key,
         algorithms=["RS256"],
         audience=audience,
-        issuer=issuer
+        # issuer=issuer
+        options={"verify_aud": True, "verify_iss": False},
     )
     return decoded_token
 
 async def verify_jwt(token):
     try:
-        id_token = token.split(" ")[1]
+        id_token = token.replace("Bearer ", "")
         return authenticate_id_token(id_token, ISSUER, AAD_APP_CLIENT_ID, JWKS_URI)
         # TODO: Fix auth
     except Exception as e:
+        print("Auth error:", e)
         return None
 
 
