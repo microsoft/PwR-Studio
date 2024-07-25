@@ -57,7 +57,7 @@ const chatModePivotStyle: Partial<IPivotStyles> = {
 
 
 export const EditorPage: React.FunctionComponent = () => {
-    const { t } = useTranslation();
+    const { t, i18n} = useTranslation();
     const [projectDetails, setProjectDetails] = React.useState<any>();
     const params = useParams();
     const [userId, setUserId] = React.useState<string | undefined>(undefined);
@@ -79,6 +79,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const fileInput = React.createRef<HTMLInputElement>();
     const [dslImportLoader, setDslImportLoader] = React.useState<boolean>(false);
     const [resetTestChat, setResetTestChat] = React.useState<boolean>(false);
+
     React.useEffect(() => {
         if (token && params.id) {
             sendRequest({
@@ -90,7 +91,7 @@ export const EditorPage: React.FunctionComponent = () => {
                 }).catch((error) => {
                     console.log(error)
                     if (error?.status === 403) {
-                        alert("You don't have access to project")
+                        alert(t('unauthorizedAccess'));
                         window.location.href = `#/home`;
                     }   
                 })
@@ -164,10 +165,10 @@ export const EditorPage: React.FunctionComponent = () => {
 
     const chatModes = [{
         itemKey: 'DevMode',
-        headerText: 'Dev Mode'
+        headerText: t('editorPage.devModeHeader')
     }, {
         itemKey: 'TestMode',
-        headerText: 'Test Mode'
+        headerText: t('editorPage.testModeHeader')
     }]
 
     const onRenderOverflowButton = (overflowItems: any[] | undefined): JSX.Element => {
@@ -186,7 +187,7 @@ export const EditorPage: React.FunctionComponent = () => {
         };
         return (
           <IconButton
-            title="More options"
+            title={t('moreOptions')}
             styles={buttonStyles}
             menuIconProps={{ iconName: 'MoreVertical' }}
             menuProps={{ items: overflowItems! }}
@@ -248,11 +249,11 @@ export const EditorPage: React.FunctionComponent = () => {
                     accessToken: token,
                     body: formData
                 }).then(response => {
-                    alert("Dsl imported successfully");
+                    alert(t('dslImportSuccess'));
                     setDslImportLoader(false);
                     event.target.value = null;
                 }).catch((error) => {
-                    alert("Error importing dsl, please try again later.")
+                    alert(t('dslImportError'));
                     setDslImportLoader(false);
                     event.target.value = null;
                 })
@@ -318,7 +319,7 @@ export const EditorPage: React.FunctionComponent = () => {
                     <Stack.Item>
                         <Stack horizontal tokens={{ childrenGap: 10 }}>
                             <Stack.Item>
-                                <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>Import DSL &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
+                                <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileupload")} &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
                                 <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
                             </Stack.Item>
                             <Stack.Item>
@@ -419,19 +420,19 @@ export const EditorPage: React.FunctionComponent = () => {
                                                 overflowItems={[
                                                 {
                                                     key: 'download',
-                                                    name: 'Download Transcript',
+                                                    name: t('downloadTranscript'),
                                                     iconProps: { iconName: 'Download' },
                                                     onClick: () => {},
                                                 },
                                                 {
                                                     key: 'callbackFrom',
-                                                    name: 'Callback From',
+                                                    name: t('callbackFrom'),
                                                     iconProps: { iconName: 'FormLibrary' },
                                                     onclick: () => {}
                                                 },
                                                 {
                                                     key: 'clearData',
-                                                    name: 'Start / Reset bot',
+                                                    name: t('resetChat'),
                                                     iconProps: { iconName: 'Rerun' },
                                                     onClick: () => {
                                                         setResetTestChat(true);

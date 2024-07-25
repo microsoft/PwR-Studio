@@ -8,6 +8,7 @@ import { useId } from '@fluentui/react-hooks';
 import { APIHost } from '../../constants';
 import { sendRequest } from '../../api';
 import { appInsights } from './../../applicationInsightsService';
+import { useTranslation } from 'react-i18next';
 
 interface props {
     projectId: string | undefined,
@@ -21,6 +22,7 @@ const buttonStackStyles: IStackItemStyles = { root: { justifyContent: 'space-bet
 const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
 
 export const Representations: React.FunctionComponent<props> = (props: props) => {
+    const { t } = useTranslation();
     const [wrapperHeight, setWrapperHeight] = useState('100%')
     const editorRef = useRef<any>(null);
     const [editProgress, setEditProgress] = useState<boolean>(false);
@@ -286,7 +288,7 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
 
     return (
         <div id={representationId} ref={resizedContainerRef} style={{ height: wrapperHeight }}>
-            <Text block variant="medium" styles={boldStyle}>Representations</Text>
+            <Text block variant="medium" styles={boldStyle}>{t("representations.title")}</Text>
             <Stack horizontal styles={buttonStackStyles} tokens={buttonStackTokens}>
                 <Stack.Item>
                     {representations ?
@@ -296,7 +298,7 @@ export const Representations: React.FunctionComponent<props> = (props: props) =>
                             // eslint-disable-next-line react/jsx-no-bind
                             onLinkClick={(item?: PivotItem, ev?: any) => {
                                 if (editMode) {
-                                    alert('Please submit or discard your changes before switching representations.');
+                                    alert(t('representations.editModeAlert'));
                                     return false;
                                 }
                                 if (item && !editMode) {

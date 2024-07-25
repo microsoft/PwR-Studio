@@ -82,11 +82,11 @@ export const App: React.FunctionComponent = () => {
   return (
     <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
       <Text variant="xxLarge" styles={boldStyle}>
-        Welcome to PwR Studio
+        {t('app.pwrWelcome')}
       </Text>
       <Stack styles={{ root: { width: "80vw" } }} >
         <Text variant="large">
-          Programming with Representations (<b>PwR</b>) gives you the ability to build applications using a conversational interface. Build anything you like just by describing it in plain English.
+          {t('app.pwrTagLine')}
         </Text>
       </Stack>
       <br />
