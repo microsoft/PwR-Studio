@@ -26,6 +26,5 @@
     "publishModal.installationURL": "Get your project online",
     "publishModal.installationSecret": "Secret Key",
     "representations.editModeAlert": "Please submit or discard your changes before switching representations.",
-    "representations.title": "Representations",
-    
+    "representations.title": "Representations"
 }
