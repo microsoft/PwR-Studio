@@ -335,7 +335,7 @@ export const HomePage: React.FunctionComponent = () => {
                     <label htmlFor="dslInput">
                         <Stack horizontal style={{ marginTop: '10px' }}>
                             <Stack.Item>
-                                <DefaultButton className='small' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>Import DSL</DefaultButton>
+                                <DefaultButton className='small' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")}</DefaultButton>
                             </Stack.Item>
                             <Stack.Item>
                                 {copyTemplateValues.dsl.name && <span style={{ lineHeight: '30px', paddingLeft: '10px' }}>Selected file: {copyTemplateValues.dsl.name}</span>}
