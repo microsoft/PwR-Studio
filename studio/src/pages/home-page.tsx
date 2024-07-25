@@ -211,7 +211,7 @@ export const HomePage: React.FunctionComponent = () => {
         try {
             if (token) {
                 if (copyTemplateValues.name.trim() === '' || copyTemplateValues.description.trim() === '') {
-                    alert('Please enter name and description');
+                    alert(t('homePage.nameAndDescriptionAlert'));
                 }
                 if (disabled) return
                 setDisabled(true)
@@ -280,7 +280,7 @@ export const HomePage: React.FunctionComponent = () => {
                             onSearch(searchQuery);
                         })
                 }).catch(error => {
-                    alert("Error in deleting the project. Please try again later.")
+                    alert(t('homePage.deleteProjectError'));
                 })
         }
     };
@@ -304,7 +304,7 @@ export const HomePage: React.FunctionComponent = () => {
             >
                 <div className={'modal-header'}>
                     <div className={'modal-heading'}>
-                        Create New Project
+                        {t('createNewProject')}
                     </div>
                     <IconButton
                         className={'modal-close'}
@@ -329,7 +329,7 @@ export const HomePage: React.FunctionComponent = () => {
                                        
                     <div style={{height:'10px'}}>&nbsp;</div>
                     <MessageBar>
-                       If you would like to clone, you can upload an existing program (DSL)
+                       {t('homePage.dslFileUploadMessage')}
                     </MessageBar>
                     <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
                     <label htmlFor="dslInput">
@@ -347,7 +347,7 @@ export const HomePage: React.FunctionComponent = () => {
                     <DefaultButton className='secondary-button' disabled={disabled} onClick={() => copyTemplate(copyTemplateValues)}>
                         Create
                     </DefaultButton>
-                    <DefaultButton text="Cancel" onClick={() => { toggleModal(null) }} />
+                    <DefaultButton text={t("cancel")} onClick={() => { toggleModal(null) }} />
                 </div>
 
             </Modal>
@@ -360,7 +360,7 @@ export const HomePage: React.FunctionComponent = () => {
             >
                 <div className={'modal-header'}>
                     <div className={'modal-heading'}>
-                        Share Project
+                        {t('shareProject')}
                     </div>
                     <IconButton
                         className={'modal-close'}
@@ -386,7 +386,7 @@ export const HomePage: React.FunctionComponent = () => {
                     <DefaultButton className='secondary-button' disabled={disabled} onClick={() => shareProject()}>
                         Share Project
                     </DefaultButton>
-                    <DefaultButton text="Cancel" onClick={() => { toggleModal(null) }} />
+                    <DefaultButton text={t('cancel')} onClick={() => { toggleModal(null) }} />
                 </div>
             </Modal>
             <Stack.Item>
@@ -419,7 +419,7 @@ export const HomePage: React.FunctionComponent = () => {
                                         />
                                     </Stack.Item>
                                     <Stack.Item className={'search-button'}>
-                                        <DefaultButton onClick={(ev: any) => { onActionClick(ev) }} className={'secondary-button'}>{t('Create New Project')}</DefaultButton>
+                                        <DefaultButton onClick={(ev: any) => { onActionClick(ev) }} className={'secondary-button'}>{t('createNewProject')}</DefaultButton>
                                     </Stack.Item>
                                 </Stack>
                             </Stack.Item>
@@ -450,7 +450,7 @@ export const HomePage: React.FunctionComponent = () => {
                                                                             />
                                                                     </Stack.Item>
                                                                     <Stack.Item>
-                                                                        <IconButton iconProps={{iconName: 'Delete'}} onClick={(ev:any)=> { deleteProject(project, ev); } } title="Delete" ariaLabel="Delete" />
+                                                                        <IconButton iconProps={{iconName: 'Delete'}} onClick={(ev:any)=> { deleteProject(project, ev); } } title={t("delete")} ariaLabel={t("delete")} />
                                                                     </Stack.Item>
                                                                 </Stack>
                                                             </Stack.Item>
