@@ -319,7 +319,7 @@ export const EditorPage: React.FunctionComponent = () => {
                     <Stack.Item>
                         <Stack horizontal tokens={{ childrenGap: 10 }}>
                             <Stack.Item>
-                                <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileupload")} &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
+                                <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")} &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
                                 <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
                             </Stack.Item>
                             <Stack.Item>
