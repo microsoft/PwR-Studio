@@ -210,8 +210,9 @@ export const HomePage: React.FunctionComponent = () => {
     const copyTemplate = (copyTemplateValues: any) => {
         try {
             if (token) {
-                if (copyTemplateValues.name.trim() === '' || copyTemplateValues.description.trim() === '') {
-                    alert(t('homePage.nameAndDescriptionAlert'));
+                if (copyTemplateValues.name.trim() === '') {
+                    alert(t('homePage.nameRequiredAlert'));
+                    return;
                 }
                 if (disabled) return
                 setDisabled(true)
