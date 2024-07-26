@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@azure/msal-browser": "^2.33.0",
-    "@azure/msal-react": "^1.5.3",
+    "@azure/msal-browser": "^3.20.0",
+    "@azure/msal-react": "^2.0.22",
     "@fluentui/example-data": "^8.4.6",
     "@fluentui/react": "^8.106.1",
     "@microsoft/applicationinsights-react-js": "^3.4.2",
