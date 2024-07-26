@@ -1,0 +1,14 @@
+.markdown-body table {
+    border-collapse: collapse;
+  }
+  
+  .markdown-body th, .markdown-body td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .markdown-body th {
+    background-color: #f2f2f2;
+  }
+  
