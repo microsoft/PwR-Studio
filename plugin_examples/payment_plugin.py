@@ -1,8 +1,8 @@
 import json
 import uuid
+from enum import Enum
 from typing import Any, Dict, Optional
-from jb_manager_bot import AbstractFSM
-from jb_manager_bot.abstract_fsm import Variables
+from jb_manager_bot import AbstractFSM, Variables
 from jb_manager_bot.data_models import (
     FSMOutput,
     Status,
@@ -15,6 +15,11 @@ from jb_manager_bot.data_models import (
 
 def request_payment(amount: int, transaction_id: str) -> str:
     return f"https://bandhu.com/pay/{transaction_id}/{amount}"
+
+
+class PaymentPluginReturnStatus(Enum):
+    SUCCESS = "success"
+    FAILED = "failed"
 
 
 class PaymentPluginVariables(Variables):
@@ -65,6 +70,7 @@ class PaymentPlugin(AbstractFSM):
     conditions = {"is_payment_success"}
     output_variables = {"reference_id"}
     variable_names = PaymentPluginVariables
+    return_status_values = PaymentPluginReturnStatus
 
     def __init__(self, send_message: callable, credentials: Dict[str, Any] = None):
         if credentials is None:
@@ -76,6 +82,7 @@ class PaymentPlugin(AbstractFSM):
             raise ValueError("Missing credential: RAZORPAY_API_KEY")
 
         self.variables = self.variable_names()
+        self.return_status_values = self.return_status_values.SUCCESS
         super().__init__(send_message)
 
     def on_enter_send_payment_request(self):
@@ -110,6 +117,7 @@ class PaymentPlugin(AbstractFSM):
 
     def on_enter_send_payment_success_confirmation(self):
         self.status = Status.WAIT_FOR_ME
+        self.return_status = self.return_status_values.SUCCESS
         self.send_message(
             FSMOutput(
                 intent=FSMIntent.SEND_MESSAGE,
@@ -123,6 +131,7 @@ class PaymentPlugin(AbstractFSM):
 
     def on_enter_send_payment_failed_confirmation(self):
         self.status = Status.WAIT_FOR_ME
+        self.return_status = self.return_status_values.FAILED
         self.send_message(
             FSMOutput(
                 intent=FSMIntent.SEND_MESSAGE,

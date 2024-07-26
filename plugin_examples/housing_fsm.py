@@ -1,6 +1,6 @@
 from typing import Any, Dict, Type, Optional
-from jb_manager_bot import AbstractFSM
-from jb_manager_bot.abstract_fsm import (
+from jb_manager_bot import AbstractFSM, Variables
+from jb_manager_bot.data_models import (
     Status,
     MessageType,
     FSMOutput,
@@ -8,11 +8,11 @@ from jb_manager_bot.abstract_fsm import (
     Message,
     TextMessage,
 )
-from jb_manager_bot.abstract_fsm import Variables
 from payment_plugin import PaymentPlugin
 
 
 class HousingFSMVariables(Variables):
+    token_payment_status: Optional[str] = None
     token_payment_reference_id: Optional[str] = None
     full_payment_reference_id: Optional[str] = None
 
@@ -25,30 +25,43 @@ class HousingFSM(AbstractFSM):
     states = [
         "zero",
         "select_language",
+        "send_payment_message",
         "token_payment",
-        "get_full_payment",
         "show_confirmation",
+        "show_payment_failed",
         "end",
     ]
     transitions = [
+        {
+            "source": "token_payment",
+            "dest": "show_payment_failed",
+            "trigger": "next",
+            "conditions": "is_payment_unsuccessful",
+        },
+        {
+            "source": "token_payment",
+            "dest": "show_confirmation",
+            "trigger": "next",
+            "conditions": "is_payment_successful",
+        },
         {"source": "zero", "dest": "select_language", "trigger": "next"},
         {
             "source": "select_language",
+            "dest": "send_payment_message",
+            "trigger": "next",
+        },
+        {
+            "source": "send_payment_message",
             "dest": "token_payment",
             "trigger": "next",
         },
         {
-            "source": "token_payment",
-            "dest": "get_full_payment",
-            "trigger": "next",
-        },
-        {
-            "source": "get_full_payment",
-            "dest": "show_confirmation",
-            "trigger": "next",
-        },
-        {
             "source": "show_confirmation",
+            "dest": "end",
+            "trigger": "next",
+        },
+        {
+            "source": "show_payment_failed",
             "dest": "end",
             "trigger": "next",
         },
@@ -80,9 +93,8 @@ class HousingFSM(AbstractFSM):
         self.send_message(FSMOutput(intent=FSMIntent.LANGUAGE_CHANGE))
         self.status = Status.WAIT_FOR_USER_INPUT
 
-    def on_enter_token_payment(self):
+    def on_enter_send_payment_message(self):
         self.status = Status.WAIT_FOR_ME
-
         message_head = (
             "We'll make this easy for you:\n"
             "\n1) Pay a token amount of Rs. 600 to guarantee a match for you, whether or not you finalise this property"
@@ -95,32 +107,26 @@ class HousingFSM(AbstractFSM):
                 ),
             )
         )
+        self.status = Status.MOVE_FORWARD
+
+    def on_enter_token_payment(self):
+        self.status = Status.WAIT_FOR_ME
+
         amount = 600
         if (
             plugin_output := self.run_plugin("payment", amount=amount)
         ) == self.RUN_TOKEN:
             return
-        payment_refernce_id = plugin_output["reference_id"]
+        payment_status, payment_output = plugin_output
+        payment_refernce_id = payment_output["reference_id"]
+
+        setattr(self.variables, "token_payment_status", payment_status)
         setattr(self.variables, "token_payment_reference_id", payment_refernce_id)
         self.status = Status.MOVE_FORWARD
 
-    def on_enter_get_full_payment(self):
-        self.status = Status.WAIT_FOR_ME
-        amount = 20000
-        if (
-            plugin_output := self.run_plugin("payment", amount=amount)
-        ) == self.RUN_TOKEN:
-            return
-        payment_refernce_id = plugin_output["reference_id"]
-        setattr(self.variables, "full_payment_reference_id", payment_refernce_id)
-        self.status = Status.MOVE_FORWARD
-    
     def on_enter_show_confirmation(self):
         self.status = Status.WAIT_FOR_ME
-        message_head = (
-            "Thank you for your payment! We've received your token payment and full payment. "
-            "We'll be in touch with you shortly to arrange a property visit and provide you with a verification code and the property location."
-        )
+        message_head = "Thank you for your payment! We've received your token payment. "
         self.send_message(
             FSMOutput(
                 intent=FSMIntent.SEND_MESSAGE,
@@ -130,6 +136,31 @@ class HousingFSM(AbstractFSM):
             )
         )
         self.status = Status.MOVE_FORWARD
+    
+    def on_enter_show_payment_failed(self):
+        self.status = Status.WAIT_FOR_ME
+        message_head = "Payment failed. Please try again."
+        self.send_message(
+            FSMOutput(
+                intent=FSMIntent.SEND_MESSAGE,
+                message=Message(
+                    message_type=MessageType.TEXT, text=TextMessage(body=message_head)
+                ),
+            )
+        )
+        self.status = Status.MOVE_FORWARD
+
+    def is_payment_successful(self) -> bool:
+        return (
+            getattr(self.variables, "token_payment_status")
+            == PaymentPlugin.return_status_values.SUCCESS
+        )
+
+    def is_payment_unsuccessful(self) -> bool:
+        return (
+            getattr(self.variables, "token_payment_status")
+            == PaymentPlugin.return_status_values.FAILED
+        )
 
 
 def test_machine(
