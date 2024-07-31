@@ -209,7 +209,7 @@ export const EditorPage: React.FunctionComponent = () => {
         console.log('pluginCallback plugin:', plugin);
         hidePluginStore();
         setInputText(text);
-        setSelectedPlugins(prevPlugins => [...prevPlugins, plugin]); // Add the new plugin to the array
+        setSelectedPlugins(prevPlugins => [...prevPlugins, plugin]);
         setTimeout(() => {
             setInputText('');
         }, 500);
@@ -335,13 +335,12 @@ export const EditorPage: React.FunctionComponent = () => {
                 <Stack horizontal tokens={{ childrenGap: 10 }}>
                     {selectedPlugins.map((plugin, index) => (
                         <Stack.Item key={index} className='selected-plugin-box'>
-                            <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center" styles={{ root: { backgroundColor: '#EDE9FE', padding: '5px 10px', borderRadius: '5px', marginTop: '10px', border: '1px solid #D8D8D8' } }}>
-                                <Text>{plugin.name}</Text>
-                                <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => setSelectedPlugins(prevPlugins => prevPlugins.filter((_, i) => i !== index))} />
-                            </Stack>
+                            <Text>{plugin.name}</Text>
+                            <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => setSelectedPlugins(prevPlugins => prevPlugins.filter((_, i) => i !== index))} />
                         </Stack.Item>
                     ))}
                 </Stack>
+
 
             </Stack.Item>
             <Stack.Item>
