@@ -207,13 +207,18 @@ export const EditorPage: React.FunctionComponent = () => {
     const pluginCallback = (text: string, plugin: any) => {
         console.log('pluginCallback text:', text);
         console.log('pluginCallback plugin:', plugin);
-        hidePluginStore();
-        setInputText(text);
-        setSelectedPlugins(prevPlugins => [...prevPlugins, plugin]);
-        setTimeout(() => {
-            setInputText('');
-        }, 500);
-        navigator.clipboard.writeText(text);
+        hidePluginStore();    
+        const isPluginAlreadySelected = selectedPlugins.some(selectedPlugin => selectedPlugin.name === plugin.name);
+        if (!isPluginAlreadySelected) {
+            setInputText(text);
+            setSelectedPlugins(prevPlugins => [...prevPlugins, plugin]);
+            setTimeout(() => {
+                setInputText('');
+            }, 500);
+            navigator.clipboard.writeText(text);
+        } else {
+            console.log('Plugin is already selected');
+        }
     };
 
     React.useEffect(() => {
