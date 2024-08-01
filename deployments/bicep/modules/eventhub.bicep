@@ -36,7 +36,7 @@ resource eventhubNamespace_sendlisten 'Microsoft.EventHub/namespaces/authorizati
 
 resource eventhubNamespace_pwr 'Microsoft.EventHub/namespaces/eventhubs@2024-01-01' = {
   parent: eventhubNamespace_resource
-  name: 'pwr'
+  name: 'pwr_engine'
   properties: {
     retentionDescription: {
       cleanupPolicy: 'Delete'

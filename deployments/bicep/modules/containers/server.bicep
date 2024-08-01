@@ -1,56 +1,32 @@
-param availabilityZones array
 param location string
 param containerName string
-param imageName string
+param subnetId string
 
-@allowed([
-  'Linux'
-  'Windows'
-])
-param osType string
 param numberCpuCores string
 param memory string
 
-@allowed([
-  'OnFailure'
-  'Always'
-  'Never'
-])
-param restartPolicy string
-
-@allowed([
-  'Standard'
-  'Confidential'
-])
-param sku string
 param imageRegistryLoginServer string
+param imageName string
 param imageUsername string
-
 @secure()
 param imagePassword string
+
 param SERVER_HOST string
 param dbConnectionString string
+
 param AAD_APP_CLIENT_ID string
 param AAD_APP_TENANT_ID string
 param ISSUER string
-param KAFKA_BROKER string
-param KAFKA_USE_SASL string
-param KAFKA_ENGINE_TOPIC string
-param KAFKA_PRODUCER_USERNAME string
 
+param KAFKA_BROKER string
+param KAFKA_PRODUCER_USERNAME string
 @secure()
 param KAFKA_PRODUCER_PASSWORD string
-param KAFKA_CONSUMER_USERNAME string
 
-@secure()
-param KAFKA_CONSUMER_PASSWORD string
-param ipAddressType string
-param ports array
 
 resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-preview' = {
   location: location
   name: containerName
-  zones: availabilityZones
   properties: {
     containers: [
       {
@@ -90,11 +66,11 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
             }
             {
               name: 'KAFKA_USE_SASL'
-              value: KAFKA_USE_SASL
+              value: 'true'
             }
             {
               name: 'KAFKA_ENGINE_TOPIC'
-              value: KAFKA_ENGINE_TOPIC
+              value: 'pwr_engine'
             }
             {
               name: 'KAFKA_PRODUCER_USERNAME'
@@ -104,16 +80,7 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
               name: 'KAFKA_PRODUCER_PASSWORD'
               secureValue: KAFKA_PRODUCER_PASSWORD
             }
-            {
-              name: 'KAFKA_CONSUMER_USERNAME'
-              value: KAFKA_CONSUMER_USERNAME
-            }
-            {
-              name: 'KAFKA_CONSUMER_PASSWORD'
-              secureValue: KAFKA_CONSUMER_PASSWORD
-            }
           ]
-          ports: ports
           command: [
             'uvicorn'
             'app.main:app'
@@ -124,12 +91,13 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
             '--port'
             '80'
           ]
+          ports: [{port: 80, protocol: 'TCP'}, {port: 3000, protocol: 'TCP'}]
         }
       }
     ]
-    restartPolicy: restartPolicy
-    osType: osType
-    sku: sku
+    restartPolicy: 'OnFailure'
+    osType: 'Linux'
+    sku: 'Standard'
     imageRegistryCredentials: [
       {
         server: imageRegistryLoginServer
@@ -137,16 +105,14 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
         password: imagePassword
       }
     ]
-    ipAddress: {
-      type: ipAddressType
-      ports: ports
-    }
     subnetIds: [
-      {
-        // generate dynamically instead of hardcoding
-        id: 'sss'
-      }
+      {id: subnetId}
     ]
   }
   tags: {}
 }
+
+
+// output the private IP adress assigned to the container group from the subnet
+
+output containerIP string = container.properties.ipAddress.ip

@@ -1,53 +1,32 @@
-param availabilityZones array
 param location string
 param containerName string
-param imageName string
+param subnetId string
 
-@allowed([
-  'Linux'
-  'Windows'
-])
-param osType string
 param numberCpuCores string
 param memory string
 
-@allowed([
-  'OnFailure'
-  'Always'
-  'Never'
-])
-param restartPolicy string
-
-@allowed([
-  'Standard'
-  'Confidential'
-])
-param sku string
 param imageRegistryLoginServer string
 param imageUsername string
-
 @secure()
 param imagePassword string
+param imageName string
+
 param KAFKA_BROKER string
-param KAFKA_USE_SASL string
 param KAFKA_CONSUMER_USERNAME string
 
 @secure()
 param KAFKA_CONSUMER_PASSWORD string
-param KAFKA_ENGINE_TOPIC string
 
 @secure()
 param AZURE_OPENAI_API_KEY string
 param AZURE_OPENAI_API_VERSION string
 param AZURE_OPENAI_ENDPOINT string
-param FAST_MODEL string
-param SLOW_MODEL string
-param ports array
+param FAST_MODEL string = 'gpt-4-turbo'
+param SLOW_MODEL string = 'gpt-4-turbo'
 
 resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-preview' = {
   location: location
   name: containerName
-  zones: availabilityZones
   properties: {
     containers: [
       {
@@ -67,7 +46,7 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
             }
             {
               name: 'KAFKA_USE_SASL'
-              value: KAFKA_USE_SASL
+              value: 'true'
             }
             {
               name: 'KAFKA_CONSUMER_USERNAME'
@@ -79,7 +58,7 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
             }
             {
               name: 'KAFKA_ENGINE_TOPIC'
-              value: KAFKA_ENGINE_TOPIC
+              value: 'pwr_engine'
             }
             {
               name: 'AZURE_OPENAI_API_KEY'
@@ -102,19 +81,22 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
               value: SLOW_MODEL
             }
           ]
-          ports: ports
+          ports: [{port: 80, protocol: 'TCP'}]
         }
       }
     ]
-    restartPolicy: restartPolicy
-    osType: osType
-    sku: sku
+    restartPolicy: 'OnFailure'
+    osType: 'Linux'
+    sku: 'Standard'
     imageRegistryCredentials: [
       {
         server: imageRegistryLoginServer
         username: imageUsername
         password: imagePassword
       }
+    ]
+    subnetIds: [
+      {id: subnetId}
     ]
   }
   tags: {}

@@ -171,5 +171,5 @@ studio/dist
 .env-dev
 .env-prod
 dump.sql
-mainTemplate.parameters.json
+*.parameters.json
 *.bicepparam

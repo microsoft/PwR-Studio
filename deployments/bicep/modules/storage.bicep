@@ -50,9 +50,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
 resource storageAccountName_default 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' = {
   parent: storageAccount
   name: 'default'
-  sku: {
-    name: 'Standard_LRS'
-  }
   properties: {
     changeFeed: {
       enabled: false
