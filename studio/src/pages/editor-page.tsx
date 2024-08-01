@@ -332,16 +332,6 @@ export const EditorPage: React.FunctionComponent = () => {
                         </Stack>
                     </Stack.Item>
                 </Stack>
-                {/* <Stack horizontal tokens={{ childrenGap: 10 }}>
-                    {selectedPlugins.map((plugin, index) => (
-                        <Stack.Item key={index} className='selected-plugin-box'>
-                            <Text>{plugin.name}</Text>
-                            <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => setSelectedPlugins(prevPlugins => prevPlugins.filter((_, i) => i !== index))} />
-                        </Stack.Item>
-                    ))}
-                </Stack> */}
-
-
             </Stack.Item>
             <Stack.Item>
                 <Stack horizontal className={'content-row'}>
