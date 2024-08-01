@@ -332,14 +332,14 @@ export const EditorPage: React.FunctionComponent = () => {
                         </Stack>
                     </Stack.Item>
                 </Stack>
-                <Stack horizontal tokens={{ childrenGap: 10 }}>
+                {/* <Stack horizontal tokens={{ childrenGap: 10 }}>
                     {selectedPlugins.map((plugin, index) => (
                         <Stack.Item key={index} className='selected-plugin-box'>
                             <Text>{plugin.name}</Text>
                             <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => setSelectedPlugins(prevPlugins => prevPlugins.filter((_, i) => i !== index))} />
                         </Stack.Item>
                     ))}
-                </Stack>
+                </Stack> */}
 
 
             </Stack.Item>
@@ -459,7 +459,7 @@ export const EditorPage: React.FunctionComponent = () => {
                             </Stack.Item>
                             <Stack.Item>
                                 <div style={{ display: chatMode === 'DevMode' ? 'block' : 'none' }}>
-                                    <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} />
+                                    <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} selectedPlugins={selectedPlugins} setSelectedPlugins={setSelectedPlugins} />
                                 </div>
                                 <div style={{ display: chatMode === 'TestMode' ? 'block' : 'none' }}>
                                     <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} resetChat={resetTestChat} resetChatToggle={setResetTestChat}/>

@@ -16,8 +16,10 @@ interface props {
     setOnlineState: Function,
     pluginStoreToggle: Function,
     refreshIR: Function,
-    setProgramState: Function
-    inputText: string
+    setProgramState: Function,
+    inputText: string,
+    selectedPlugins: any[], // Add this prop
+    setSelectedPlugins: React.Dispatch<React.SetStateAction<any[]>> // Add this prop
 }
 
 export const devBot = (props:props) => {
@@ -249,7 +251,9 @@ export const devBot = (props:props) => {
                     disableSend={disableSend}
                     sendMessageToWss={sendMessageToWss}
                     onFileChange={onFileChange} 
-            />
+                    selectedPlugins={props.selectedPlugins}
+                    setSelectedPlugins={props.setSelectedPlugins}
+                />
             </Stack.Item>
         </Stack>
     )
