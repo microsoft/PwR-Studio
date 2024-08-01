@@ -9,8 +9,8 @@ interface props {
     onFileChange: any
     pluginStoreToggle: Function
     inputText: string
-    selectedPlugins: any[]
-    setSelectedPlugins: React.Dispatch<React.SetStateAction<any[]>>
+    selectedPlugins: Set<any>
+    setSelectedPlugins: React.Dispatch<React.SetStateAction<Set<any>>>
 }
 
 const devbotfooterStyles = makeStyles(theme => ({
@@ -41,7 +41,7 @@ export const DevBotFooter = (props: props) => {
         if (props.disableSend) { return; }
         props.sendMessageToWss(message);
         setMessage('');
-        props.setSelectedPlugins([]);
+        props.setSelectedPlugins(new Set());
     };
 
     return (
@@ -59,10 +59,14 @@ export const DevBotFooter = (props: props) => {
             </Stack.Item>
             <Stack.Item>
                 <Stack horizontal tokens={{ childrenGap: 10 }}>
-                    {props.selectedPlugins.map((plugin, index) => (
+                    {[...props.selectedPlugins].map((plugin, index) => (
                         <Stack.Item key={index} className='selected-plugin-box'>
                             <Text>{plugin.name}</Text>
-                            <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => props.setSelectedPlugins(prevPlugins => prevPlugins.filter((_, i) => i !== index))} />
+                            <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => props.setSelectedPlugins(prevPlugins => {
+                                const updatedPlugins = new Set(prevPlugins);
+                                updatedPlugins.delete(plugin);
+                                return updatedPlugins;
+                            })} />
                         </Stack.Item>
                     ))}
                 </Stack>

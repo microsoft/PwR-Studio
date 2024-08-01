@@ -65,7 +65,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const [devChatOnline, setDevChatStatus] = React.useState<boolean>(false);
     const [sandboxChatOnline, setSandboxChatStatus] = React.useState<boolean>(false);
     const [token, setToken] = React.useState<any>(null);
-    const [selectedPlugins, setSelectedPlugins] = React.useState<any[]>([]);
+    const [selectedPlugins, setSelectedPlugins] = React.useState<Set<any>>(new Set());
     const [isPublishModalOpen, { setTrue: showPublishModal, setFalse: hidePublishModal }] = useBoolean(false);
     const [isPluginStoreOpen, { setTrue: showPluginStore, setFalse: hidePluginStore }] = useBoolean(false);
     const [plugins, setPlugins] = React.useState<any>();
@@ -207,18 +207,22 @@ export const EditorPage: React.FunctionComponent = () => {
     const pluginCallback = (text: string, plugin: any) => {
         console.log('pluginCallback text:', text);
         console.log('pluginCallback plugin:', plugin);
-        hidePluginStore();    
-        const isPluginAlreadySelected = selectedPlugins.some(selectedPlugin => selectedPlugin.name === plugin.name);
-        if (!isPluginAlreadySelected) {
-            setInputText(text);
-            setSelectedPlugins(prevPlugins => [...prevPlugins, plugin]);
-            setTimeout(() => {
-                setInputText('');
-            }, 500);
-            navigator.clipboard.writeText(text);
-        } else {
-            console.log('Plugin is already selected');
-        }
+        hidePluginStore();
+    
+        setSelectedPlugins(prevPlugins => {
+            const updatedPlugins = new Set(prevPlugins);
+            if (!Array.from(updatedPlugins).some(existingPlugin => existingPlugin.name === plugin.name)) {
+                setInputText(text);
+                updatedPlugins.add(plugin);
+                setTimeout(() => {
+                    setInputText('');
+                }, 500);
+                navigator.clipboard.writeText(text);
+            } else {
+                console.log('Plugin is already selected');
+            }
+            return updatedPlugins;
+        });
     };
 
     React.useEffect(() => {

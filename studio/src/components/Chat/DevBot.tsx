@@ -18,8 +18,8 @@ interface props {
     refreshIR: Function,
     setProgramState: Function,
     inputText: string,
-    selectedPlugins: any[], // Add this prop
-    setSelectedPlugins: React.Dispatch<React.SetStateAction<any[]>> // Add this prop
+    selectedPlugins: Set<any>
+    setSelectedPlugins: React.Dispatch<React.SetStateAction<Set<any>>>
 }
 
 export const devBot = (props:props) => {
