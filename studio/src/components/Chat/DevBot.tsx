@@ -19,7 +19,7 @@ interface props {
     setProgramState: Function,
     inputText: string,
     selectedPlugins: Set<any>
-    setSelectedPlugins: React.Dispatch<React.SetStateAction<Set<any>>>
+    setSelectedPlugins: Function
 }
 
 export const devBot = (props:props) => {

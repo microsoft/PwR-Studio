@@ -10,7 +10,7 @@ interface props {
     pluginStoreToggle: Function
     inputText: string
     selectedPlugins: Set<any>
-    setSelectedPlugins: React.Dispatch<React.SetStateAction<Set<any>>>
+    setSelectedPlugins: Function
 }
 
 const devbotfooterStyles = makeStyles(theme => ({
