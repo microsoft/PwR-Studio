@@ -507,8 +507,7 @@ export const EditorPage: React.FunctionComponent = () => {
                     </Stack.Item>
                     <Stack.Item>
                         <Stack horizontal tokens={{ childrenGap: 10 }}>
-                            {config.features['dslFileUpload'] && 
-                            <Stack.Item>
+                            {config.features["dslFileUpload"] && <Stack.Item>
                                 <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")} &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
                                 <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
                             </Stack.Item>
