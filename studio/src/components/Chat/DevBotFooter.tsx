@@ -1,5 +1,6 @@
 import '@/styles/components/DevBotFooter.scss';
 import { DefaultButton, IconButton, Stack, TextField, makeStyles } from "@fluentui/react";
+import { useTranslation } from 'react-i18next';
 import React from "react";
 
 
@@ -20,6 +21,7 @@ const devbotfooterStyles = makeStyles(theme => ({
 export const DevBotFooter = (props: props) => {
     const fileInput = React.createRef<HTMLInputElement>();
     const classStyles = devbotfooterStyles();
+    const { t, i18n} = useTranslation();
     const [message, setMessage] = React.useState('');
 
     React.useEffect(() => { 
@@ -42,10 +44,10 @@ export const DevBotFooter = (props: props) => {
                 <Stack horizontal className='button-stack' tokens={{childrenGap: 20}}>
                     <Stack.Item>
                         <input ref={fileInput} accept=".pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt, .rtf, .odt" onChange={props.onFileChange} type='file' multiple hidden />
-                        <DefaultButton  onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }} className='primary-button'>Upload Files</DefaultButton>
+                        <DefaultButton  onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }} className='primary-button'>{t('devFooter.uploadFiles')}</DefaultButton>
                     </Stack.Item>
                     <Stack.Item>
-                        <DefaultButton onClick={() => props.pluginStoreToggle()} className='primary-button'>Add Plugin</DefaultButton>
+                        <DefaultButton onClick={() => props.pluginStoreToggle()} className='primary-button'>{t('devFooter.addPlugin')}</DefaultButton>
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
