@@ -1,0 +1,17 @@
+{
+    "features":{
+        "dslFileUpload": false,
+        "publishModal.publishButton": true,
+        "devFooter.uploadFiles": false,
+        "editorPage.devModeHeader": false,
+        "representations.nlr":true,
+        "representations.chart": true,
+        "representations.dsl": false,
+        "representations.code": false,
+        "error.errors": true,
+        "error.warnings": true,
+        "error.optimizations": false,
+        "error.botExperience": false
+
+    }
+}
