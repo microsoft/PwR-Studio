@@ -1,17 +1,17 @@
 {
     "features":{
-        "dslFileUpload": false,
+        "dslFileUpload": true,
         "publishModal.publishButton": true,
-        "devFooter.uploadFiles": false,
-        "editorPage.devModeHeader": false,
+        "devFooter.uploadFiles": true,
+        "editorPage.devModeHeader": true,
         "representations.nlr":true,
         "representations.chart": true,
-        "representations.dsl": false,
-        "representations.code": false,
+        "representations.dsl": true,
+        "representations.code": true,
         "error.errors": true,
         "error.warnings": true,
-        "error.optimizations": false,
-        "error.botExperience": false
+        "error.optimizations": true,
+        "error.botExperience": true
 
     }
 }
