@@ -6,13 +6,14 @@ import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import MermaidChart from "../Mermaid";
 import '../../styles/markdownStyles.css';
+import useConfig from "../../hooks/useConfig";
 
 interface props {
     representation: any;
     token: string;
 }
 export const RepView = (props: props) => {
-    
+    const config = useConfig();
     const stackStyle: IStackStyles = {
         root: {
             paddingLeft: '10px',
@@ -39,6 +40,9 @@ export const RepView = (props: props) => {
     };
     
     const renderRepresentation = (representation: any) => {
+        if (!config){
+            return null;
+        }
         if (representation?.name === 'code') {
             return (<Editor options={{ readOnly: true }} defaultValue={representation?.text} height='calc(100vh - 44px)' defaultLanguage="markdown">
             </Editor>)

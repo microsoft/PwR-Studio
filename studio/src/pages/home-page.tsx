@@ -11,6 +11,7 @@ import { APIHost } from '../constants';
 import moment from 'moment';
 import { appInsights } from '../applicationInsightsService';
 import logo from './images/logo.png';
+import useConfig from '../hooks/useConfig';
 
 
 export const HomePage: React.FunctionComponent = () => {
@@ -38,6 +39,7 @@ export const HomePage: React.FunctionComponent = () => {
     const [token, setToken] = React.useState<any>(null);
     const [shareProjectId, setProjectId] = React.useState<string>('');
     const fileInput = React.createRef<HTMLInputElement>();
+    const config = useConfig();
 
     const onSearch = (query:string) => {
         const filtered = projects.filter((item:any) =>
@@ -293,6 +295,186 @@ export const HomePage: React.FunctionComponent = () => {
             copyTemplateValues.dsl.name = file.name;
         }
     }
+    if (!config){
+        return (
+            <Stack className="home-page">
+                <Modal
+                    titleAriaId={useId('copyTemplate')}
+                    isOpen={modalToggle === 'copyTemplate'}
+                    onDismiss={() => { toggleModal(null) }}
+                    isBlocking={false}
+                    containerClassName={'modal-container'}
+                >
+                    <div className={'modal-header'}>
+                        <div className={'modal-heading'}>
+                            {t('createNewProject')}
+                        </div>
+                        <IconButton
+                            className={'modal-close'}
+                            iconProps={{ iconName: 'Cancel' }}
+                            ariaLabel="Close popup modal"
+                            onClick={() => { toggleModal(null) }}
+                        />
+                    </div>
+                    <div className={'modal-body'}>
+                        {serverMessage.message &&
+                            <MessageBar
+                                messageBarType={serverMessage.type === 'success' ? MessageBarType.success : MessageBarType.error}
+                                onDismiss={() => { setServerMessage({ message: '', type: '' }) }}
+                                isMultiline={false}
+                                dismissButtonAriaLabel="Close"
+                            >
+                                {serverMessage.message}
+                            </MessageBar>
+                        }
+                        <TextField label="Name" onChange={(e, value) => { copyTemplateValues.name = value || '' }} defaultValue={copyTemplateValues.name} />
+                        <TextField label="Description" onChange={(e, value) => { copyTemplateValues.description = value || '' }} defaultValue={copyTemplateValues.description} multiline resizable={false} />
+                                           
+                        <div style={{height:'10px'}}>&nbsp;</div>
+                        <MessageBar>
+                           {t('homePage.dslFileUploadMessage')}
+                        </MessageBar>
+                        <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
+                        
+                        <label htmlFor="dslInput">
+                        <Stack horizontal style={{ marginTop: '10px' }}>
+                                <Stack.Item>
+                                    <DefaultButton className='small' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")}</DefaultButton>
+                                </Stack.Item>
+                                <Stack.Item>
+                                    {copyTemplateValues.dsl.name && <span style={{ lineHeight: '30px', paddingLeft: '10px' }}>Selected file: {copyTemplateValues.dsl.name}</span>}
+                                </Stack.Item>
+                        </Stack>    
+                        </label>
+                    </div>
+                    <div className={'modal-footer'}>
+                        <DefaultButton className='secondary-button' disabled={disabled} onClick={() => copyTemplate(copyTemplateValues)}>
+                            Create
+                        </DefaultButton>
+                        <DefaultButton text={t("cancel")} onClick={() => { toggleModal(null) }} />
+                    </div>
+    
+                </Modal>
+                <Modal
+                    titleAriaId={useId('shareProject')}
+                    isOpen={modalToggle === 'shareProject'}
+                    onDismiss={() => { toggleModal(null) }}
+                    isBlocking={false}
+                    containerClassName="modal-container"
+                >
+                    <div className={'modal-header'}>
+                        <div className={'modal-heading'}>
+                            {t('shareProject')}
+                        </div>
+                        <IconButton
+                            className={'modal-close'}
+                            iconProps={{ iconName: 'Cancel' }}
+                            ariaLabel="Close popup modal"
+                            onClick={() => { toggleModal(null) }}
+                        />
+                    </div>
+                    <div className={'modal-body'}>
+                        {serverMessage.message &&
+                            <MessageBar
+                                messageBarType={serverMessage.type === 'success' ? MessageBarType.success : MessageBarType.error}
+                                onDismiss={() => { setServerMessage({ message: '', type: '' }) }}
+                                isMultiline={false}
+                                dismissButtonAriaLabel="Close"
+                            >
+                                {serverMessage.message}
+                            </MessageBar>
+                        }
+                        <TextField label="Email" onChange={(e, value) => { setEmail(value || '') }} />
+                    </div>
+                    <div className={'modal-footer'}>
+                        <DefaultButton className='secondary-button' disabled={disabled} onClick={() => shareProject()}>
+                            Share Project
+                        </DefaultButton>
+                        <DefaultButton text={t('cancel')} onClick={() => { toggleModal(null) }} />
+                    </div>
+                </Modal>
+                <Stack.Item>
+                    <Stack horizontal className="header">
+                        <Stack.Item className={'heading'}>
+                            {t('appName')}
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item>
+                    <Stack horizontal className={'content-row'}>
+                        <Stack.Item className={'sidebar'}>
+                            <Stack verticalAlign='end' style={{ height: '100%' }}>
+                                <Stack.Item align='center' className={'logout'}>
+                                    <IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'SignOut' }} title={t('logout')} ariaLabel={t('logout')} />
+                                </Stack.Item>
+                            </Stack>
+                        </Stack.Item>
+                        <Stack.Item className={'content'}>
+                            <Stack className={'content-stack'}>
+                                <Stack.Item>
+                                    <Stack horizontal className={'project-search'}>
+                                        <Stack.Item className={'search-box'}>
+                                        <SearchBox 
+                                            className={'custom-search-box'}
+                                            placeholder="Search"
+                                            onChange={(_, newValue) => onSearch(newValue || '')}
+                                            onSearch={onSearch}
+                                            onClear={() => onSearch('')}
+                                            />
+                                        </Stack.Item>
+                                        <Stack.Item className={'search-button'}>
+                                            <DefaultButton onClick={(ev: any) => { onActionClick(ev) }} className={'secondary-button'}>{t('createNewProject')}</DefaultButton>
+                                        </Stack.Item>
+                                    </Stack>
+                                </Stack.Item>
+                                <Stack.Item className={'project-items-wrapper'}>
+                                        {filteredProjects.map((project: any, index: number) => {
+                                            return (
+                                                <Stack onClick={() => clickAction(project)} className={'project-item'} key={index}>
+                                                        <Stack.Item>
+                                                            <Stack horizontal className={'project-details'}>
+                                                                <Stack.Item>
+                                                                    <Stack>
+                                                                        <Stack.Item>
+                                                                            <span className={'project-name'}>{project.name}</span><br/>
+                                                                        </Stack.Item>
+                                                                        <Stack.Item>
+                                                                        <span className={'project-date'}>Created on {moment(project.created_at).format("Do MMM YY")}</span>
+                                                                        </Stack.Item>
+                                                                    </Stack>
+                                                                </Stack.Item>
+                                                                <Stack.Item>
+                                                                    <Stack horizontal>
+                                                                        <Stack.Item>
+                                                                            <IconButton 
+                                                                                iconProps={{iconName: 'Share'}} 
+                                                                                title="Share" 
+                                                                                ariaLabel="Share" 
+                                                                                onClick={(ev:any) => openShareProject(project, ev)}
+                                                                                />
+                                                                        </Stack.Item>
+                                                                        <Stack.Item>
+                                                                            <IconButton iconProps={{iconName: 'Delete'}} onClick={(ev:any)=> { deleteProject(project, ev); } } title={t("delete")} ariaLabel={t("delete")} />
+                                                                        </Stack.Item>
+                                                                    </Stack>
+                                                                </Stack.Item>
+                                                            </Stack>
+                                                        </Stack.Item>
+                                                        <Stack.Item>
+                                                            <div className={'project-description'}>{project.description}</div>
+                                                        </Stack.Item>
+                                                </Stack>
+                                            )
+                                        })}
+                                </Stack.Item>
+                            </Stack>
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+            </Stack>
+        )
+        
+    }
 
     return (
         <Stack className="home-page">
@@ -329,20 +511,22 @@ export const HomePage: React.FunctionComponent = () => {
                     <TextField label="Description" onChange={(e, value) => { copyTemplateValues.description = value || '' }} defaultValue={copyTemplateValues.description} multiline resizable={false} />
                                        
                     <div style={{height:'10px'}}>&nbsp;</div>
-                    <MessageBar>
+                    {config.features["dslFileUpload"] && <MessageBar>
                        {t('homePage.dslFileUploadMessage')}
-                    </MessageBar>
-                    <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
-                    <label htmlFor="dslInput">
+                    </MessageBar>}
+                    {config.features["dslFileUpload"] && <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />}
+                    {config.features["dslFileUpload"] &&
+                        <label htmlFor="dslInput">
                         <Stack horizontal style={{ marginTop: '10px' }}>
-                            <Stack.Item>
-                                <DefaultButton className='small' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")}</DefaultButton>
-                            </Stack.Item>
-                            <Stack.Item>
-                                {copyTemplateValues.dsl.name && <span style={{ lineHeight: '30px', paddingLeft: '10px' }}>Selected file: {copyTemplateValues.dsl.name}</span>}
-                            </Stack.Item>
+                                <Stack.Item>
+                                    <DefaultButton className='small' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")}</DefaultButton>
+                                </Stack.Item>
+                                <Stack.Item>
+                                    {copyTemplateValues.dsl.name && <span style={{ lineHeight: '30px', paddingLeft: '10px' }}>Selected file: {copyTemplateValues.dsl.name}</span>}
+                                </Stack.Item>
                         </Stack>    
-                    </label>
+                        </label>
+                    }
                 </div>
                 <div className={'modal-footer'}>
                     <DefaultButton className='secondary-button' disabled={disabled} onClick={() => copyTemplate(copyTemplateValues)}>
@@ -393,7 +577,7 @@ export const HomePage: React.FunctionComponent = () => {
             <Stack.Item>
                 <Stack horizontal className="header">
                     <Stack.Item className={'heading'}>
-                        PwR Studio
+                        {t('appName')}
                     </Stack.Item>
                 </Stack>
             </Stack.Item>

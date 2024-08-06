@@ -14,6 +14,7 @@ import RepView from '../components/Representations/RepView';
 import TestBot from '../components/Chat/TestBot';
 import { useTranslation } from 'react-i18next';
 import PublishModal from '../components/PublishModal';
+import useConfig from '../hooks/useConfig';
 
 const boldHeaderStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold, color: '#696969' } };
 
@@ -79,6 +80,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const fileInput = React.createRef<HTMLInputElement>();
     const [dslImportLoader, setDslImportLoader] = React.useState<boolean>(false);
     const [resetTestChat, setResetTestChat] = React.useState<boolean>(false);
+    const config = useConfig();
 
     React.useEffect(() => {
         if (token && params.id) {
@@ -91,7 +93,7 @@ export const EditorPage: React.FunctionComponent = () => {
                 }).catch((error) => {
                     console.log(error)
                     if (error?.status === 403) {
-                        alert(t('unauthorizedAccess'));
+                        alert(t("unauthorizedAccess"));
                         window.location.href = `#/home`;
                     }   
                 })
@@ -275,7 +277,194 @@ export const EditorPage: React.FunctionComponent = () => {
             </Stack.Item>)
         }
     }
-
+    if (!config){
+        return (
+            <Stack className='editor-page'>
+                <Stack.Item>
+                    <PublishModal isOpen={isPublishModalOpen} hideModal={hidePublishModal} representations={representations} dslName={projectDetails?.name}/>
+                    <Modal
+                        titleAriaId={useId('pluginStore')}
+                        isBlocking={true}
+                        isOpen={isPluginStoreOpen}
+                        scrollableContentClassName=''
+                        containerClassName={'modal-container'}
+                    >
+                        <Stack>
+                            <Stack.Item>
+                                <Stack className={'modal-header'} horizontal style={{ 'width': '100%', justifyContent: 'space-between' }}>
+                                    <Stack.Item >
+                                        <Text variant="xxLarge" styles={boldHeaderStyle}>Features</Text>
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <FontIcon 
+                                            aria-label="Close"
+                                            iconName="ChromeClose"
+                                            className={iconClass} 
+                                            onClick={() => hidePluginStore()}
+                                            />
+                                    </Stack.Item>
+                                </Stack>    
+                            </Stack.Item>
+                            <Stack.Item>
+                                <PluginList plugins={plugins} pluginCallback={pluginCallback} />
+                            </Stack.Item>
+                        </Stack>
+    
+                    </Modal>
+                    <Stack horizontal className={'header'}>
+                        <Stack.Item className={'heading'} onClick={() => window.location.href = '/#/home' }>
+                            {t('appName')}
+                        </Stack.Item>
+                        <Stack.Item className={'project-name'}>
+                            {projectDetails?.name}
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Stack horizontal tokens={{ childrenGap: 10 }}>
+                                <Stack.Item>
+                                    <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")} &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
+                                    <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
+                                </Stack.Item>
+                                <Stack.Item>
+                                    <DefaultButton onClick={showPublishModal} className={'secondary-button'}>{t('publishModal.publishButton')}</DefaultButton>
+                                </Stack.Item>
+                            </Stack>
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+                <Stack.Item>
+                    <Stack horizontal className={'content-row'}>
+                        <Stack.Item className={'sidebar'}>
+                            <Stack verticalAlign='start' style={{ height: '100%' }}>
+                                {representations && representations.map((item: any, index: number) => {
+                                    return renderRep(item, index)
+                                        
+                                    })
+                                }
+                                <Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
+                                    <IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
+                                </Stack.Item>
+                            </Stack>
+                        </Stack.Item>
+                        <Stack.Item className={'ir'}>
+                            <Stack className={'container'}>
+                                <Stack.Item className={'content'}>
+                                    <RepView representation={selectedRepresentation} token={token} />
+                                </Stack.Item>
+                                    <Stack.Item>
+                                    <Stack horizontal className={'errors'}>
+                                        <Stack.Item className={'error'}>
+                                            <Stack horizontal className={'content'}>
+                                                <Stack.Item>
+                                                    <Icon iconName="StatusErrorFull" /> {t("errors.errors")}
+                                                </Stack.Item>
+                                                <Stack.Item>
+                                                    {programState?.errors || 0}
+                                                </Stack.Item>
+                                            </Stack>
+                                        </Stack.Item>
+                                        <Stack.Item className={'warnings'}>
+                                        <Stack horizontal className={'content'}>
+                                                <Stack.Item>
+                                                    <Icon iconName="WarningSolid" /> {t("errors.warnings")}
+                                                </Stack.Item>
+                                                <Stack.Item>
+                                                    {programState?.warnings || 0}
+                                                </Stack.Item>
+                                            </Stack>
+                                        </Stack.Item>
+                                            <Stack.Item className={'optimize'}>
+                                            <Stack horizontal className={'content'}>
+                                                <Stack.Item>
+                                                    <Icon iconName="Chart" /> {t("errors.optimizations")}
+                                                </Stack.Item>
+                                                <Stack.Item>
+                                                    {programState?.optimizations || 0}
+                                                </Stack.Item>
+                                            </Stack>
+                                            </Stack.Item>
+                                            <Stack.Item className={'bot-experience'}>
+                                            <Stack horizontal className={'content'}>
+                                                <Stack.Item>
+                                                    <Icon iconName="FavoriteStarFill" /> {t("errors.botExperience")}
+                                                </Stack.Item>
+                                                <Stack.Item>
+                                                    {programState?.botExperience || 0}
+                                                </Stack.Item>
+                                            </Stack>
+                                            </Stack.Item>
+                                        
+                                    </Stack>
+                                    </Stack.Item>
+                                
+                            </Stack>
+                        </Stack.Item>
+                        <Stack.Item className={'chat-wrapper'}>
+                            <Stack>
+                                <Stack.Item>
+                                    <Stack horizontal className={'chat-header'}>
+                                        <Stack.Item>
+                                            <Pivot 
+                                                onLinkClick={(item?: PivotItem, ev?: any) => {
+                                                    setChatMode(item?.props.itemKey || 'DevMode')
+                                                }}
+                                                className={chatModeClass()} styles={chatModePivotStyle}>
+                                                {chatModes.map((item, index) => {
+                                                    return (
+                                                        <PivotItem 
+                                                            headerText={item.headerText} itemKey={item.itemKey} key={index} 
+                                                        />
+                                                    )
+                                                })}
+                                            </Pivot>
+                                        </Stack.Item>
+                                        <Stack.Item>
+                                            <OverflowSet
+                                                    aria-label="Actions"
+                                                    style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
+                                                    overflowItems={[
+                                                    {
+                                                        key: 'download',
+                                                        name: t('downloadTranscript'),
+                                                        iconProps: { iconName: 'Download' },
+                                                        onClick: () => {},
+                                                    },
+                                                    {
+                                                        key: 'callbackFrom',
+                                                        name: t('callbackFrom'),
+                                                        iconProps: { iconName: 'FormLibrary' },
+                                                        onclick: () => {}
+                                                    },
+                                                    {
+                                                        key: 'clearData',
+                                                        name: t('resetChat'),
+                                                        iconProps: { iconName: 'Rerun' },
+                                                        onClick: () => {
+                                                            setResetTestChat(true);
+                                                        },
+                                                    }
+                                                    ]}
+                                                    onRenderOverflowButton={onRenderOverflowButton}
+                                                    onRenderItem={() => {}}
+                                                />
+                                        </Stack.Item>
+                                    </Stack>
+                                </Stack.Item>
+                                <Stack.Item>
+                                    <div style={{ display: chatMode === 'DevMode' ? 'block': 'none' }}>
+                                        <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} />
+                                    </div>
+                                    <div style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}>
+                                        <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} resetChat={resetTestChat} resetChatToggle={setResetTestChat}/>
+                                    </div>
+                                </Stack.Item> 
+                            </Stack>
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+            </Stack>
+        )
+    
+    }
     return (
         <Stack className='editor-page'>
             <Stack.Item>
@@ -291,7 +480,7 @@ export const EditorPage: React.FunctionComponent = () => {
                         <Stack.Item>
                             <Stack className={'modal-header'} horizontal style={{ 'width': '100%', justifyContent: 'space-between' }}>
                                 <Stack.Item >
-                                    <Text variant="xxLarge" styles={boldHeaderStyle}> Features</Text>
+                                    <Text variant="xxLarge" styles={boldHeaderStyle}>Features</Text>
                                 </Stack.Item>
                                 <Stack.Item>
                                     <FontIcon 
@@ -311,20 +500,24 @@ export const EditorPage: React.FunctionComponent = () => {
                 </Modal>
                 <Stack horizontal className={'header'}>
                     <Stack.Item className={'heading'} onClick={() => window.location.href = '/#/home' }>
-                        PwR Studio
+                        {t('appName')}
                     </Stack.Item>
                     <Stack.Item className={'project-name'}>
                         {projectDetails?.name}
                     </Stack.Item>
                     <Stack.Item>
                         <Stack horizontal tokens={{ childrenGap: 10 }}>
-                            <Stack.Item>
+                            {config.features["dslFileUpload"] && <Stack.Item>
                                 <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")} &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
                                 <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
                             </Stack.Item>
+                            }
+                           {
+                            config.features["publishModal.publishButton"] &&
                             <Stack.Item>
-                                <DefaultButton onClick={showPublishModal} className={'secondary-button'}>Publish</DefaultButton>
+                                <DefaultButton onClick={showPublishModal} className={'secondary-button'}>{t('publishModal.publishButton')}</DefaultButton>
                             </Stack.Item>
+                            }
                         </Stack>
                     </Stack.Item>
                 </Stack>
@@ -348,50 +541,57 @@ export const EditorPage: React.FunctionComponent = () => {
                             <Stack.Item className={'content'}>
                                 <RepView representation={selectedRepresentation} token={token} />
                             </Stack.Item>
-                            <Stack.Item>
+                            { config.features["error.errors"] && <Stack.Item>
                                 <Stack horizontal className={'errors'}>
                                     <Stack.Item className={'error'}>
                                         <Stack horizontal className={'content'}>
                                             <Stack.Item>
-                                                <Icon iconName="StatusErrorFull" /> Errors
+                                                <Icon iconName="StatusErrorFull" /> {t("errors.errors")}
                                             </Stack.Item>
                                             <Stack.Item>
                                                 {programState?.errors || 0}
                                             </Stack.Item>
                                         </Stack>
                                     </Stack.Item>
+                                    {config.features["error.warnings"] && 
                                     <Stack.Item className={'warnings'}>
                                     <Stack horizontal className={'content'}>
                                             <Stack.Item>
-                                                <Icon iconName="WarningSolid" /> Warnings
+                                                <Icon iconName="WarningSolid" /> {t("errors.warnings")}
                                             </Stack.Item>
                                             <Stack.Item>
                                                 {programState?.warnings || 0}
                                             </Stack.Item>
                                         </Stack>
                                     </Stack.Item>
-                                    <Stack.Item className={'optimize'}>
+                                    }
+                                    {config.features["error.optimizations"] &&
+                                        <Stack.Item className={'optimize'}>
                                         <Stack horizontal className={'content'}>
                                             <Stack.Item>
-                                                <Icon iconName="Chart" /> Optimize
+                                                <Icon iconName="Chart" /> {t("errors.optimizations")}
                                             </Stack.Item>
                                             <Stack.Item>
                                                 {programState?.optimizations || 0}
                                             </Stack.Item>
                                         </Stack>
-                                    </Stack.Item>
-                                    <Stack.Item className={'bot-experience'}>
+                                        </Stack.Item>
+                                    }
+                                    {config.features["error.botExperience"] &&
+                                        <Stack.Item className={'bot-experience'}>
                                         <Stack horizontal className={'content'}>
                                             <Stack.Item>
-                                                <Icon iconName="FavoriteStarFill" /> Bot Experience
+                                                <Icon iconName="FavoriteStarFill" /> {t("errors.botExperience")}
                                             </Stack.Item>
                                             <Stack.Item>
                                                 {programState?.botExperience || 0}
                                             </Stack.Item>
                                         </Stack>
-                                    </Stack.Item>
+                                        </Stack.Item>
+                                    }
                                 </Stack>
-                            </Stack.Item>
+                                </Stack.Item>
+                            }
                         </Stack>
                     </Stack.Item>
                     <Stack.Item className={'chat-wrapper'}>
@@ -459,6 +659,7 @@ export const EditorPage: React.FunctionComponent = () => {
             </Stack.Item>
         </Stack>
     )
+
 
 }
 

@@ -29,5 +29,11 @@
     "publishModal.installationURL": "Get your project online",
     "publishModal.installationSecret": "Secret Key",
     "representations.editModeAlert": "Please submit or discard your changes before switching representations.",
-    "representations.title": "Representations"
+    "representations.title": "Representations",
+    "devFooter.addPlugin": "Add Plugins",
+    "devFooter.uploadFiles": "Upload Files",
+    "errors.errors": "Error",
+    "errors.warnings": "Warnings",
+    "errors.optimizations": "Optimize",
+    "errors.botExperience": "Bot Experience"
 }
