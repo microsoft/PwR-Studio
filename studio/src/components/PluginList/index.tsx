@@ -5,12 +5,11 @@ const PluginCard = ({ plugin, pluginCallback }:any) => {
     const [expanded, setExpanded] = React.useState(true);
     const { palette } = getTheme();
 
-    const copyToClipboard = (e: Event, text:string) => {
+    const copyToClipboard = (e: React.MouseEvent, text: string, plugin: any) => {
         e.stopPropagation();
         e.preventDefault();
-        pluginCallback(text);
+        pluginCallback(text, plugin);
     };
-
 
     return (
         <Stack tokens={{ childrenGap: 10 }} style={{ border: `1px solid ${palette.neutralLight}`, padding: 10, margin: 10, minWidth: 300, maxWidth: 300 }} onClick={() => setExpanded(!expanded)}>
@@ -29,7 +28,7 @@ const PluginCard = ({ plugin, pluginCallback }:any) => {
                         {/* <Text><a href={plugin.pypi_url}>PyPi URL</a></Text><br/><br/> */}
                         {/* <Text><a href={plugin.dsl}>DSL</a></Text><br/><br/>
                         <Text><a href={plugin.doc}>Doc</a></Text><br/><br/> */}
-                        <DefaultButton className='secondary-button' text="Add" onClick={(e: any) => copyToClipboard(e, "#plugin(" + plugin.pypi_url + ")")} />
+                        <DefaultButton className='secondary-button' text="Add" onClick={(e: any) => copyToClipboard(e, "#plugin(" + plugin.pypi_url + ")", plugin)} />
                     </Stack.Item>
                 </Stack>
             )}
