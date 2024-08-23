@@ -5,6 +5,7 @@ import React from "react";
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import MermaidChart from "../Mermaid";
+import '../../styles/markdownStyles.css';
 
 interface props {
     representation: any;
@@ -47,12 +48,16 @@ export const RepView = (props: props) => {
                 <pre>{representation?.text}</pre>
             )
         } else
+        
+
         if (representation?.type === 'md') {
             const processedMarkdown = representation?.text.replace(/"([^"]+)"/g, '<span class="break-word" style="word-break: break-all;">$1</span>');
             return (
-                <ReactMarkdown remarkPlugins={[gfm]}>
-                    {processedMarkdown}
-                </ReactMarkdown>
+                <div className="markdown-body">
+                    <ReactMarkdown remarkPlugins={[gfm]}>
+                        {processedMarkdown}
+                    </ReactMarkdown>
+                </div>
             )
         } else if (representation?.type === 'image') {
             if (representation?.text.startsWith('data:image') && representation?.text.includes(';base64,')) {
