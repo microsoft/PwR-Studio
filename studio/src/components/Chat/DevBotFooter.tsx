@@ -1,7 +1,7 @@
 import '@/styles/components/DevBotFooter.scss';
-import { DefaultButton, IconButton, Stack, TextField, makeStyles } from "@fluentui/react";
+import { DefaultButton, IconButton, Stack, TextField, Text, makeStyles } from "@fluentui/react";
 import React from "react";
-
+import '../../styles/selectedPlugin.css';
 
 interface props {
     disableSend: boolean
@@ -9,6 +9,8 @@ interface props {
     onFileChange: any
     pluginStoreToggle: Function
     inputText: string
+    selectedPlugins: Set<any>
+    setSelectedPlugins: Function
 }
 
 const devbotfooterStyles = makeStyles(theme => ({
@@ -35,6 +37,12 @@ export const DevBotFooter = (props: props) => {
         }
     }, [props.inputText]);
 
+    const sendAndReset = () => {
+        if (props.disableSend) { return; }
+        props.sendMessageToWss(message);
+        setMessage('');
+        props.setSelectedPlugins(new Set());
+    };
 
     return (
         <Stack className='devbot-footer'>
@@ -50,6 +58,18 @@ export const DevBotFooter = (props: props) => {
                 </Stack>
             </Stack.Item>
             <Stack.Item>
+                <Stack horizontal tokens={{ childrenGap: 10 }}>
+                    {[...props.selectedPlugins].map((plugin, index) => (
+                        <Stack.Item key={index} className='selected-plugin-box'>
+                            <Text>{plugin.name}</Text>
+                            <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => props.setSelectedPlugins(prevPlugins => {
+                                const updatedPlugins = new Set(prevPlugins);
+                                updatedPlugins.delete(plugin);
+                                return updatedPlugins;
+                            })} />
+                        </Stack.Item>
+                    ))}
+                </Stack>
                 <Stack className='input-field-stack'>
                     <Stack.Item>
                         <TextField 
@@ -58,8 +78,7 @@ export const DevBotFooter = (props: props) => {
                             onKeyUp={(e) => { 
                                     if (props.disableSend) { return; }
                                     if (e.key === 'Enter') {
-                                        props.sendMessageToWss(message);
-                                        setMessage('');
+                                        sendAndReset();
                                     } 
                                 }
                             }
@@ -71,7 +90,7 @@ export const DevBotFooter = (props: props) => {
                             onRenderSuffix={() => {
                                return (<IconButton 
                                     disabled={props.disableSend}
-                                    onClick={() => { if (props.disableSend) { return; } props.sendMessageToWss(message); setMessage('')  }}
+                                    onClick={sendAndReset}
                                     iconProps={{'iconName': 'Send'}} title="Emoji" ariaLabel="Emoji" />) 
                             }}
                             />

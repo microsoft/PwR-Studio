@@ -14,6 +14,7 @@ import RepView from '../components/Representations/RepView';
 import TestBot from '../components/Chat/TestBot';
 import { useTranslation } from 'react-i18next';
 import PublishModal from '../components/PublishModal';
+import '../styles/selectedPlugin.css';
 
 const boldHeaderStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold, color: '#696969' } };
 
@@ -64,6 +65,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const [devChatOnline, setDevChatStatus] = React.useState<boolean>(false);
     const [sandboxChatOnline, setSandboxChatStatus] = React.useState<boolean>(false);
     const [token, setToken] = React.useState<any>(null);
+    const [selectedPlugins, setSelectedPlugins] = React.useState<Set<any>>(new Set());
     const [isPublishModalOpen, { setTrue: showPublishModal, setFalse: hidePublishModal }] = useBoolean(false);
     const [isPluginStoreOpen, { setTrue: showPluginStore, setFalse: hidePluginStore }] = useBoolean(false);
     const [plugins, setPlugins] = React.useState<any>();
@@ -202,14 +204,26 @@ export const EditorPage: React.FunctionComponent = () => {
         'diagram': 'VisioDiagram'
     }
 
-    const pluginCallback = (text:string) => {
+    const pluginCallback = (text: string, plugin: any) => {
+        console.log('pluginCallback text:', text);
+        console.log('pluginCallback plugin:', plugin);
         hidePluginStore();
-        setInputText(text);
-        setTimeout(() => {
-            setInputText('');
-        }, 500)
-        navigator.clipboard.writeText(text);
-    }
+    
+        setSelectedPlugins(prevPlugins => {
+            const updatedPlugins = new Set(prevPlugins);
+            if (!Array.from(updatedPlugins).some(existingPlugin => existingPlugin.name === plugin.name)) {
+                setInputText(text);
+                updatedPlugins.add(plugin);
+                setTimeout(() => {
+                    setInputText('');
+                }, 500);
+                navigator.clipboard.writeText(text);
+            } else {
+                console.log('Plugin is already selected');
+            }
+            return updatedPlugins;
+        });
+    };
 
     React.useEffect(() => {
         if (isPluginStoreOpen) {
@@ -290,7 +304,7 @@ export const EditorPage: React.FunctionComponent = () => {
                     <Stack>
                         <Stack.Item>
                             <Stack className={'modal-header'} horizontal style={{ 'width': '100%', justifyContent: 'space-between' }}>
-                                <Stack.Item >
+                                <Stack.Item>
                                     <Text variant="xxLarge" styles={boldHeaderStyle}> Features</Text>
                                 </Stack.Item>
                                 <Stack.Item>
@@ -299,15 +313,14 @@ export const EditorPage: React.FunctionComponent = () => {
                                         iconName="ChromeClose"
                                         className={iconClass} 
                                         onClick={() => hidePluginStore()}
-                                        />
+                                    />
                                 </Stack.Item>
-                            </Stack>    
+                            </Stack>
                         </Stack.Item>
                         <Stack.Item>
                             <PluginList plugins={plugins} pluginCallback={pluginCallback} />
                         </Stack.Item>
                     </Stack>
-
                 </Modal>
                 <Stack horizontal className={'header'}>
                     <Stack.Item className={'heading'} onClick={() => window.location.href = '/#/home' }>
@@ -335,9 +348,7 @@ export const EditorPage: React.FunctionComponent = () => {
                         <Stack verticalAlign='start' style={{ height: '100%' }}>
                             {representations && representations.map((item: any, index: number) => {
                                 return renderRep(item, index)
-                                    
-                                })
-                            }
+                            })}
                             <Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
                                 <IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
                             </Stack.Item>
@@ -361,7 +372,7 @@ export const EditorPage: React.FunctionComponent = () => {
                                         </Stack>
                                     </Stack.Item>
                                     <Stack.Item className={'warnings'}>
-                                    <Stack horizontal className={'content'}>
+                                        <Stack horizontal className={'content'}>
                                             <Stack.Item>
                                                 <Icon iconName="WarningSolid" /> Warnings
                                             </Stack.Item>
@@ -415,9 +426,9 @@ export const EditorPage: React.FunctionComponent = () => {
                                     </Stack.Item>
                                     <Stack.Item>
                                         <OverflowSet
-                                                aria-label="Actions"
-                                                style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
-                                                overflowItems={[
+                                            aria-label="Actions"
+                                            style={{ display: chatMode === 'TestMode' ? 'block' : 'none' }}
+                                            overflowItems={[
                                                 {
                                                     key: 'download',
                                                     name: t('downloadTranscript'),
@@ -438,27 +449,28 @@ export const EditorPage: React.FunctionComponent = () => {
                                                         setResetTestChat(true);
                                                     },
                                                 }
-                                                ]}
-                                                onRenderOverflowButton={onRenderOverflowButton}
-                                                onRenderItem={() => {}}
-                                            />
+                                            ]}
+                                            onRenderOverflowButton={onRenderOverflowButton}
+                                            onRenderItem={() => {}}
+                                        />
                                     </Stack.Item>
                                 </Stack>
                             </Stack.Item>
                             <Stack.Item>
-                                <div style={{ display: chatMode === 'DevMode' ? 'block': 'none' }}>
-                                    <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} />
+                                <div style={{ display: chatMode === 'DevMode' ? 'block' : 'none' }}>
+                                    <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} selectedPlugins={selectedPlugins} setSelectedPlugins={setSelectedPlugins} />
                                 </div>
-                                <div style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}>
+                                <div style={{ display: chatMode === 'TestMode' ? 'block' : 'none' }}>
                                     <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} resetChat={resetTestChat} resetChatToggle={setResetTestChat}/>
                                 </div>
-                            </Stack.Item> 
+                            </Stack.Item>
                         </Stack>
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
         </Stack>
     )
+    
 
 }
 
