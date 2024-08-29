@@ -84,7 +84,15 @@ export const devBot = (props:props) => {
                     console.log(error);
                 }
             }
-            addMessages((messages: any) => [lastJsonMessage, ...messages])
+            if (lastJsonMessage.type === 'thought') {
+                addMessages((messages: any) => {
+                    const filteredMessages = messages.filter((msg: any) => msg.type !== 'thought');
+                    return [lastJsonMessage, ...filteredMessages];
+                });
+            }
+            else{
+                addMessages((messages: any) => [lastJsonMessage, ...messages])
+            }
             scrollChatToBottom();
         }
     }, [lastJsonMessage, addMessages]);
