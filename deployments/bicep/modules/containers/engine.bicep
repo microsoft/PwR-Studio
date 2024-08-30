@@ -1,6 +1,5 @@
 param location string
 param containerName string
-param subnetId string
 
 param numberCpuCores string
 param memory string
@@ -94,9 +93,6 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2022-10-01-previ
         username: imageUsername
         password: imagePassword
       }
-    ]
-    subnetIds: [
-      {id: subnetId}
     ]
   }
   tags: {}

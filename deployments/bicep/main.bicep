@@ -31,6 +31,11 @@ param ISSUER string
 
 param SERVER_HOST string
 
+param keyVaultName string
+
+@description('The secret url for the certificate in Azure Key Vault.')
+@secure()
+param keyVaultSecretId string
 
 // deploy ./vnet.bicep
 
@@ -71,6 +76,16 @@ module storage './modules/storage.bicep' = {
 }
 
 
+// create a public ip that will later be used for a load balancer
+
+resource publicIp 'Microsoft.Network/publicIPAddresses@2020-11-01' = {
+  name: '${resourceNamePrefix}-public-ip'
+  location: location
+  properties: {
+    publicIPAllocationMethod: 'Dynamic'
+  }
+}
+
 // deploy the files ./server.bicep and ./engine.bicep
 
 module engine './modules/containers/engine.bicep' = {
@@ -93,7 +108,6 @@ module engine './modules/containers/engine.bicep' = {
     KAFKA_CONSUMER_USERNAME: eventhub.outputs.kafkaConnectionUsername
     memory: memory
     numberCpuCores: cpu
-    subnetId: vnet.outputs.defaultSubnetId
   }
 }
 
@@ -127,6 +141,19 @@ module server './modules/containers/server.bicep' = {
 }
 
 
+// create a load balancer that will be used to route traffic to the containers
+// module gateway './modules/gateway.bicep' = {
+//   name: '${resourceNamePrefix}-gateway'
+//   params: {
+//     resourceNamePrefix: resourceNamePrefix
+//     location: location
+//     subnetId: vnet.outputs.gatewaySubnetId
+//     publicIpId: publicIp.id
+//     backendIPAddress: server.outputs.containerIP
+//     keyVaultName: keyVaultName
+//     keyVaultSecretId: keyVaultSecretId
+//   }
+// }
 
 output eventhubNamespace string = eventhub.outputs.kafkaBroker
 output postgresqlServerName string = postgres.outputs.postgresqlServerIP
