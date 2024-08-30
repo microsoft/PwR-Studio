@@ -12,23 +12,35 @@ interface props {
     dslName: string
 }
 
+const extractPlugins = (dslContent: any) => {
+    let plugins = [];
+    for (const task of dslContent) {
+        if (task.task_type === 'plugin') {
+            plugins.push("jb-"+task.plugin.name);
+        }
+    }
+    let requirements = plugins.join("\n");
+    return requirements;
+}
+
 const uploadProgram = (url: string, secret: string, name: string, representations: any) => {
     const dslContentText = representations?.find(r => r.name == 'dsl')?.text || '{}';
     const codeContent = representations?.find(r => r.name == 'code')?.text || ''
     const dslContent = JSON.parse(dslContentText);
     const credentials = dslContent.config_vars.map(x => x.name);
+    const requirements = extractPlugins(dslContent.dsl)
     ;
 
     const requestBody = {
         'name': dslContent.fsm_name,
         'dsl': dslContentText,
         'code': codeContent,
-        'requirements': '',
+        'requirements': requirements,
         'required_credentials': credentials,
         'index_urls':[''],
         'version': '1.0.0'
-
     }
+    console.log(requestBody);
 
     sendRequest({
         url: url,
