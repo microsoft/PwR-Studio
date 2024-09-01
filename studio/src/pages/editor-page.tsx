@@ -81,7 +81,7 @@ export const EditorPage: React.FunctionComponent = () => {
     const fileInput = React.createRef<HTMLInputElement>();
     const [dslImportLoader, setDslImportLoader] = React.useState<boolean>(false);
     const [resetTestChat, setResetTestChat] = React.useState<boolean>(false);
-    
+
     React.useEffect(() => {
         if (token && params.id) {
             sendRequest({
