@@ -16,8 +16,10 @@ interface props {
     setOnlineState: Function,
     pluginStoreToggle: Function,
     refreshIR: Function,
-    setProgramState: Function
-    inputText: string
+    setProgramState: Function,
+    inputText: string,
+    selectedPlugins: Set<any>
+    setSelectedPlugins: Function
 }
 
 export const devBot = (props:props) => {
@@ -82,7 +84,15 @@ export const devBot = (props:props) => {
                     console.log(error);
                 }
             }
-            addMessages((messages: any) => [lastJsonMessage, ...messages])
+            if (lastJsonMessage.type === 'thought') {
+                addMessages((messages: any) => {
+                    const filteredMessages = messages.filter((msg: any) => msg.type !== 'thought');
+                    return [lastJsonMessage, ...filteredMessages];
+                });
+            }
+            else{
+                addMessages((messages: any) => [lastJsonMessage, ...messages])
+            }
             scrollChatToBottom();
         }
     }, [lastJsonMessage, addMessages]);
@@ -249,7 +259,9 @@ export const devBot = (props:props) => {
                     disableSend={disableSend}
                     sendMessageToWss={sendMessageToWss}
                     onFileChange={onFileChange} 
-            />
+                    selectedPlugins={props.selectedPlugins}
+                    setSelectedPlugins={props.setSelectedPlugins}
+                />
             </Stack.Item>
         </Stack>
     )

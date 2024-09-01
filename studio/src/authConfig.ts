@@ -5,7 +5,7 @@ const SCOPE_URI = import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI;
 export const msalConfig:any = {
     auth: {
         clientId:  `${CLIENT_ID}`, 
-        authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+        authority: `https://login.microsoftonline.com/common`,
         postLogoutRedirectUri:  '/', 
         navigateToLoginRequestUrl: true, 
     },

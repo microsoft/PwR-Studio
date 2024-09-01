@@ -110,7 +110,7 @@ class KafkaConsumer:
                 'auto.offset.reset': auto_offset_reset,
                 ** consumer_config
             }
-        print("consumer config", self.consumer_config)
+        # print("consumer config", self.consumer_config)
         self.consumer = Consumer(self.consumer_config)
         self.subscribed=False
         self.subscribed_topics = []
@@ -132,7 +132,7 @@ class KafkaConsumer:
         consumer_password = os.getenv('KAFKA_CONSUMER_PASSWORD')
 
         print("Consumer from env vars")
-        print(kafka_broker, use_sasl, consumer_username, consumer_password)
+        # print(kafka_broker, use_sasl, consumer_username, consumer_password)
 
         if type(use_sasl) == str and use_sasl.lower() == 'true':
             return KafkaConsumer(kafka_broker, 

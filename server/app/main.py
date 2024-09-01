@@ -1,20 +1,16 @@
-import aiohttp
 from openai import OpenAI
 import logging
 import time
 from jwt.exceptions import InvalidSignatureError
 import jwt
 from .utils import generate_q_message
-from confluent_kafka import Producer, KafkaException
-from datetime import datetime
 import requests
 import uuid
 import json
 import os
-from typing import Dict, List, Any, Optional
+from typing import List, Optional
 from fastapi import (
     FastAPI,
-    Header,
     Request,
     HTTPException,
     Depends,
@@ -30,19 +26,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import lib.pwr_studio.types as pwr_schema
 from . import crud, models, schemas
-from .database import SessionLocal, engine
-from .blob_manager import BlobManager
+from .database import SessionLocal
 from .chat_manager import ChatConnectionManager
 import tempfile
 from dotenv import load_dotenv
 from lib.pwr_studio.kafka_utils import KafkaProducer
 
 load_dotenv()
-
-# import sys
-# print(os.environ.get('DB_CONNECTION_STRING'), file=sys.stderr)
-
-# models.Base.metadata.create_all(bind=engine)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
@@ -79,33 +69,35 @@ def get_db():
 public_keys = {}
 AAD_APP_CLIENT_ID = os.environ["AAD_APP_CLIENT_ID"]
 AAD_APP_TENANT_ID = os.environ["AAD_APP_TENANT_ID"]
-# ISSUER = os.environ["ISSUER"]
-configReq = requests.get(
-    f"https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/.well-known/openid-configuration"
-)
-config = configReq.json()
-ISSUER = config["issuer"]
-jwks = requests.get(config["jwks_uri"]).json()
-for jwk in jwks["keys"]:
-    kid = jwk["kid"]
-    public_keys[kid] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
+ISSUER = f'https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/v2.0'
+JWKS_URI = f'https://login.microsoftonline.com/{AAD_APP_TENANT_ID}/discovery/v2.0/keys'
 
+
+def authenticate_id_token(id_token, issuer, audience, jwks_uri):
+    # Create a JWKS client
+    jwks_client = jwt.PyJWKClient(jwks_uri)
+    
+    # Get the signing key
+    signing_key = jwks_client.get_signing_key_from_jwt(id_token)
+    
+    # Decode and validate the token
+    decoded_token = jwt.decode(
+        id_token,
+        signing_key.key,
+        algorithms=["RS256"],
+        audience=audience,
+        # issuer=issuer
+        options={"verify_aud": True, "verify_iss": False},
+    )
+    return decoded_token
 
 async def verify_jwt(token):
-    kid = jwt.get_unverified_header(token.replace("Bearer ", ""))["kid"]
-    key = public_keys[kid]
     try:
-        unverified_token = jwt.get_unverified_header(token.replace("Bearer ", ""))
-        return jwt.decode(
-            token.replace("Bearer ", ""),
-            issuer=ISSUER,
-            audience=AAD_APP_CLIENT_ID,
-            key=key,
-            algorithms=[unverified_token["alg"]],
-            options={"verify_signature": False},
-        )
+        id_token = token.replace("Bearer ", "")
+        return authenticate_id_token(id_token, ISSUER, AAD_APP_CLIENT_ID, JWKS_URI)
         # TODO: Fix auth
     except Exception as e:
+        print("Auth error:", e)
         return None
 
 

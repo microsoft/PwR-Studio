@@ -14,6 +14,7 @@ import RepView from '../components/Representations/RepView';
 import TestBot from '../components/Chat/TestBot';
 import { useTranslation } from 'react-i18next';
 import PublishModal from '../components/PublishModal';
+import '../styles/selectedPlugin.css';
 
 const boldHeaderStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold, color: '#696969' } };
 
@@ -57,13 +58,14 @@ const chatModePivotStyle: Partial<IPivotStyles> = {
 
 
 export const EditorPage: React.FunctionComponent = () => {
-    const { t } = useTranslation();
+    const { t, i18n} = useTranslation();
     const [projectDetails, setProjectDetails] = React.useState<any>();
     const params = useParams();
     const [userId, setUserId] = React.useState<string | undefined>(undefined);
     const [devChatOnline, setDevChatStatus] = React.useState<boolean>(false);
     const [sandboxChatOnline, setSandboxChatStatus] = React.useState<boolean>(false);
     const [token, setToken] = React.useState<any>(null);
+    const [selectedPlugins, setSelectedPlugins] = React.useState<Set<any>>(new Set());
     const [isPublishModalOpen, { setTrue: showPublishModal, setFalse: hidePublishModal }] = useBoolean(false);
     const [isPluginStoreOpen, { setTrue: showPluginStore, setFalse: hidePluginStore }] = useBoolean(false);
     const [plugins, setPlugins] = React.useState<any>();
@@ -90,7 +92,7 @@ export const EditorPage: React.FunctionComponent = () => {
                 }).catch((error) => {
                     console.log(error)
                     if (error?.status === 403) {
-                        alert("You don't have access to project")
+                        alert(t('unauthorizedAccess'));
                         window.location.href = `#/home`;
                     }   
                 })
@@ -103,7 +105,7 @@ export const EditorPage: React.FunctionComponent = () => {
                 scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                 account: account
             }).then((response) => {
-                setToken(response.accessToken)
+                setToken(response.idToken)
                 setName(response?.account?.idTokenClaims?.name || 'User')
                 setUserId(response?.account?.idTokenClaims?.oid)
             }).catch((error) => {
@@ -114,7 +116,7 @@ export const EditorPage: React.FunctionComponent = () => {
                         instance.acquireTokenPopup({
                             scopes: [import.meta.env.VITE_REACT_APP_ADD_APP_SCOPE_URI || ''],
                         }).then((response) => {
-                            setToken(response.accessToken)
+                            setToken(response.idToken)
                             setUserId(response?.account?.idTokenClaims?.oid)
                         }).catch(error => console.log(error));
                     }
@@ -164,10 +166,10 @@ export const EditorPage: React.FunctionComponent = () => {
 
     const chatModes = [{
         itemKey: 'DevMode',
-        headerText: 'Dev Mode'
+        headerText: t('editorPage.devModeHeader')
     }, {
         itemKey: 'TestMode',
-        headerText: 'Test Mode'
+        headerText: t('editorPage.testModeHeader')
     }]
 
     const onRenderOverflowButton = (overflowItems: any[] | undefined): JSX.Element => {
@@ -186,7 +188,7 @@ export const EditorPage: React.FunctionComponent = () => {
         };
         return (
           <IconButton
-            title="More options"
+            title={t('moreOptions')}
             styles={buttonStyles}
             menuIconProps={{ iconName: 'MoreVertical' }}
             menuProps={{ items: overflowItems! }}
@@ -201,14 +203,26 @@ export const EditorPage: React.FunctionComponent = () => {
         'diagram': 'VisioDiagram'
     }
 
-    const pluginCallback = (text:string) => {
+    const pluginCallback = (text: string, plugin: any) => {
+        console.log('pluginCallback text:', text);
+        console.log('pluginCallback plugin:', plugin);
         hidePluginStore();
-        setInputText(text);
-        setTimeout(() => {
-            setInputText('');
-        }, 500)
-        navigator.clipboard.writeText(text);
-    }
+    
+        setSelectedPlugins(prevPlugins => {
+            const updatedPlugins = new Set(prevPlugins);
+            if (!Array.from(updatedPlugins).some(existingPlugin => existingPlugin.name === plugin.name)) {
+                setInputText(text);
+                updatedPlugins.add(plugin);
+                setTimeout(() => {
+                    setInputText('');
+                }, 500);
+                navigator.clipboard.writeText(text);
+            } else {
+                console.log('Plugin is already selected');
+            }
+            return updatedPlugins;
+        });
+    };
 
     React.useEffect(() => {
         if (isPluginStoreOpen) {
@@ -248,11 +262,11 @@ export const EditorPage: React.FunctionComponent = () => {
                     accessToken: token,
                     body: formData
                 }).then(response => {
-                    alert("Dsl imported successfully");
+                    alert(t('dslImportSuccess'));
                     setDslImportLoader(false);
                     event.target.value = null;
                 }).catch((error) => {
-                    alert("Error importing dsl, please try again later.")
+                    alert(t('dslImportError'));
                     setDslImportLoader(false);
                     event.target.value = null;
                 })
@@ -289,7 +303,7 @@ export const EditorPage: React.FunctionComponent = () => {
                     <Stack>
                         <Stack.Item>
                             <Stack className={'modal-header'} horizontal style={{ 'width': '100%', justifyContent: 'space-between' }}>
-                                <Stack.Item >
+                                <Stack.Item>
                                     <Text variant="xxLarge" styles={boldHeaderStyle}> Features</Text>
                                 </Stack.Item>
                                 <Stack.Item>
@@ -298,15 +312,14 @@ export const EditorPage: React.FunctionComponent = () => {
                                         iconName="ChromeClose"
                                         className={iconClass} 
                                         onClick={() => hidePluginStore()}
-                                        />
+                                    />
                                 </Stack.Item>
-                            </Stack>    
+                            </Stack>
                         </Stack.Item>
                         <Stack.Item>
                             <PluginList plugins={plugins} pluginCallback={pluginCallback} />
                         </Stack.Item>
                     </Stack>
-
                 </Modal>
                 <Stack horizontal className={'header'}>
                     <Stack.Item className={'heading'} onClick={() => window.location.href = '/#/home' }>
@@ -318,7 +331,7 @@ export const EditorPage: React.FunctionComponent = () => {
                     <Stack.Item>
                         <Stack horizontal tokens={{ childrenGap: 10 }}>
                             <Stack.Item>
-                                <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>Import DSL &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
+                                <DefaultButton disabled={dslImportLoader} className='' onClick={() => { window.event?.stopImmediatePropagation(); fileInput?.current?.click(); }}>{t("dslFileUpload")} &nbsp;{dslImportLoader && <Icon iconName="Sync" className="loader" />}</DefaultButton>
                                 <input id="dslInput" ref={fileInput} accept=".dsl, .txt" onChange={onFileChange} type='file' hidden />
                             </Stack.Item>
                             <Stack.Item>
@@ -334,9 +347,7 @@ export const EditorPage: React.FunctionComponent = () => {
                         <Stack verticalAlign='start' style={{ height: '100%' }}>
                             {representations && representations.map((item: any, index: number) => {
                                 return renderRep(item, index)
-                                    
-                                })
-                            }
+                            })}
                             <Stack.Item align="end" styles={logoutButtonStackItem} className={'logout'}>
                                 <IconButton onClick={() => { instance.logoutPopup(); window.location.href = `#/` } } iconProps={{ iconName: 'PowerButton' }} title={t('logout')} ariaLabel={t('logout')} />
                             </Stack.Item>
@@ -360,7 +371,7 @@ export const EditorPage: React.FunctionComponent = () => {
                                         </Stack>
                                     </Stack.Item>
                                     <Stack.Item className={'warnings'}>
-                                    <Stack horizontal className={'content'}>
+                                        <Stack horizontal className={'content'}>
                                             <Stack.Item>
                                                 <Icon iconName="WarningSolid" /> Warnings
                                             </Stack.Item>
@@ -414,38 +425,51 @@ export const EditorPage: React.FunctionComponent = () => {
                                     </Stack.Item>
                                     <Stack.Item>
                                         <OverflowSet
-                                                aria-label="Actions"
-                                                style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}
-                                                overflowItems={[
+                                            aria-label="Actions"
+                                            style={{ display: chatMode === 'TestMode' ? 'block' : 'none' }}
+                                            overflowItems={[
+                                                {
+                                                    key: 'download',
+                                                    name: t('downloadTranscript'),
+                                                    iconProps: { iconName: 'Download' },
+                                                    onClick: () => {},
+                                                },
+                                                {
+                                                    key: 'callbackFrom',
+                                                    name: t('callbackFrom'),
+                                                    iconProps: { iconName: 'FormLibrary' },
+                                                    onclick: () => {}
+                                                },
                                                 {
                                                     key: 'clearData',
-                                                    name: 'Start / Reset bot',
+                                                    name: t('resetChat'),
                                                     iconProps: { iconName: 'Rerun' },
                                                     onClick: () => {
                                                         setResetTestChat(true);
                                                     },
                                                 }
-                                                ]}
-                                                onRenderOverflowButton={onRenderOverflowButton}
-                                                onRenderItem={() => {}}
-                                            />
+                                            ]}
+                                            onRenderOverflowButton={onRenderOverflowButton}
+                                            onRenderItem={() => {}}
+                                        />
                                     </Stack.Item>
                                 </Stack>
                             </Stack.Item>
                             <Stack.Item>
-                                <div style={{ display: chatMode === 'DevMode' ? 'block': 'none' }}>
-                                    <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} />
+                                <div style={{ display: chatMode === 'DevMode' ? 'block' : 'none' }}>
+                                    <DevBot inputText={inputText} setProgramState={setProgramState} refreshIR={() => setRefreshIR(refreshIR + 1) } pluginStoreToggle={showPluginStore} userId={userId} setOnlineState={setDevChatStatus} id={params.id} token={token} selectedPlugins={selectedPlugins} setSelectedPlugins={setSelectedPlugins} />
                                 </div>
-                                <div style={{ display: chatMode === 'TestMode' ? 'block': 'none' }}>
+                                <div style={{ display: chatMode === 'TestMode' ? 'block' : 'none' }}>
                                     <TestBot userId={userId} setOnlineState={setSandboxChatStatus} id={params.id} token={token} resetChat={resetTestChat} resetChatToggle={setResetTestChat}/>
                                 </div>
-                            </Stack.Item> 
+                            </Stack.Item>
                         </Stack>
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
         </Stack>
     )
+    
 
 }
 
