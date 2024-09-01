@@ -49,11 +49,6 @@ sudo pipx ensurepath --global
 pipx install poetry
 ```
 
-   3. Install libgraphviz-dev
-```bash
-sudo apt install libgraphviz-dev
-```
-
 ## Instructions
 
 1. **Start Docker:**
@@ -91,26 +86,16 @@ You need to setup 4 repositories to start the PwR Studio. Follow the instruction
    git clone git@github.com:microsoft/PwR-NL2DSL.git
    ```
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ba7166883b29c3bb135414749cad2643260eddad
-6. **Clone [Jugalbandi-Manager](https://github.com/OpenNyAI/Jugalbandi-Manager) Repository:**
-   ```bash
-   git clone git@github.com:OpenNyAI/Jugalbandi-Manager.git
-   ```
-
 Great job! You have successfully cloned the repositories. 🎉
 
 Your directory structure should look like this:
    ```bash
-   ├── Jugalbandi-Manager
    ├── Jugalbandi-Studio-Engine
    ├── PwR-NL2DSL
    └── PwR-Studio
    ```
 
-7. **Setup Local Environment Variables:**
+6. **Setup Local Environment Variables:**
    1.  Go into `PwR-Studio` repository
       
       ```bash
