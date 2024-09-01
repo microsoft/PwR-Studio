@@ -49,7 +49,7 @@ sudo pipx ensurepath --global
 pipx install poetry
 ```
 
-4. Install libgraphviz-dev
+   3. Install libgraphviz-dev
 ```bash
 sudo apt install libgraphviz-dev
 ```
@@ -91,7 +91,10 @@ You need to setup 4 repositories to start the PwR Studio. Follow the instruction
    git clone git@github.com:microsoft/PwR-NL2DSL.git
    ```
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ba7166883b29c3bb135414749cad2643260eddad
 6. **Clone [Jugalbandi-Manager](https://github.com/OpenNyAI/Jugalbandi-Manager) Repository:**
    ```bash
    git clone git@github.com:OpenNyAI/Jugalbandi-Manager.git
