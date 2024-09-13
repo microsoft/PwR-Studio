@@ -5,6 +5,8 @@ import InPlaceEditing from './InPlaceEditing';
 import PluginList from './PluginList';
 import DevBot from './Chat/DevBot';
 import Mermaid from './Mermaid';
+import FormInput from './FormInput';
+import DropdownInput from './DropdownInput';
 
 export {
     AudioRecorder,
@@ -13,5 +15,7 @@ export {
     InPlaceEditing,
     PluginList,
     DevBot,
-    Mermaid
+    Mermaid,
+    FormInput,
+    DropdownInput
 };
