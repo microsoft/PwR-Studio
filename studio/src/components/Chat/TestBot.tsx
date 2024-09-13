@@ -9,6 +9,7 @@ import TestBotFooter from "./TestBotFooter";
 import { useId } from '@fluentui/react-hooks';
 import FormInput from '../FormInput';
 import DropdownInput from '../DropdownInput';
+import PluginInput from "../PluginInput";
 
 interface props {
     id: string | undefined,
@@ -261,6 +262,20 @@ const TestBot = (props: props) => {
         return JSON.parse(msgBody)["vars"]
     }
 
+    const isPluginInputNeeded = (messages:any) => {
+        return isCustomInputNeeded(messages, "plugin");
+    }
+
+    const getPluginOutputVariables = (messages:any) => {
+        const msgBody = messages[1].message.split('\xa1')[0];
+        return JSON.parse(msgBody)["output_variables"]
+    }
+    
+    const getPluginErrorCodes = (messages:any) => {
+        const msgBody = messages[1].message.split('\xa1')[0];
+        return JSON.parse(msgBody)["error_codes"]
+    }
+
     const isDropdownInputNeeded = (messages:any) => {
         return isCustomInputNeeded(messages, "dropdown");
     }
@@ -325,7 +340,11 @@ const TestBot = (props: props) => {
                     (
                         isDropdownInputNeeded(messages) ?
                         <DropdownInput choices={getDropdownFields(messages)} sendChoice={sendMessageToWss}/> :
-                        <TestBotFooter disableSend={disableSend} sendMessageToWss={sendMessageToWss} />
+                        (
+                            isPluginInputNeeded(messages) ?
+                            <PluginInput pluginErrorCodes={getPluginErrorCodes(messages)} pluginOutputVariableNames={getPluginOutputVariables(messages)} sendPluginValues={sendMessageToWss}/> :
+                            <TestBotFooter disableSend={disableSend} sendMessageToWss={sendMessageToWss} />
+                        )
                     )
                 }
             </Stack.Item>
