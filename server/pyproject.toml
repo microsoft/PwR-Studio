@@ -23,7 +23,7 @@ opencensus-ext-azure = "^1.1.9"
 aiohttp = "^3.9.4"
 confluent-kafka = "^2.3.0"
 openai = "^1.10.0"
-pbyc = {version = "^0.2.7", source = "pbyc"}
+# pbyc = {version = "^0.2.7", source = "pbyc"}
 
 [tool.poetry.group.dev.dependencies]
 alembic = "^1.10.4"
